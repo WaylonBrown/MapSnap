@@ -23,13 +23,13 @@ angular.module('app.controllers', [])
 				var options = {
 		            replaceLineBreaks: false, // true to replace \n by a new line, false by default
 		            android: {
-		                intent: ''  // send SMS with the native android SMS messaging
-		                //intent: '' // send SMS without open any other app
+		                //intent: 'INTENT'  // send SMS with the native android SMS messaging
+		                intent: '' // send SMS without open any other app
 		            }
 		        };
 
 				$cordovaSms
-					.send('9402935341', localStorage.getItem("message"), options)
+					.send(phoneInput.value, localStorage.getItem("message"), options)
 					.then(function() {
 						window.plugins.toast.showShortBottom('Text message sent!')
 					}, function(error) {
