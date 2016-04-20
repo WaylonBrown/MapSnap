@@ -1,6 +1,6 @@
 angular.module('app.controllers', [])
   
-.controller('startADriveCtrl', function($scope) {
+.controller('startADriveCtrl', function($scope, $cordovaSms) {
 	var sendTextButton = document.getElementById("sendTextButton")
 	var navigateButton = document.getElementById("navigateButton")
 	var phoneInput = document.getElementById("phoneInput")
@@ -8,8 +8,25 @@ angular.module('app.controllers', [])
 
 	if(localStorage != undefined) {
 		sendTextButton.addEventListener('click', function() {
-			if (localStorage.getItem("message") == undefined) {
+			if (localStorage.getItem("compcode") == undefined) {
+				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
+			} else {
+				//send text message
+				var options = {
+		            replaceLineBreaks: false, // true to replace \n by a new line, false by default
+		            android: {
+		                intent: 'INTENT'  // send SMS with the native android SMS messaging
+		                //intent: '' // send SMS without open any other app
+		            }
+		        };
 
+				$cordovaSms
+					.send('9402935341', 'test', options)
+					.then(function() {
+						window.plugins.toast.showShortBottom('Text message sent!')
+					}, function(error) {
+						window.plugins.toast.showShortBottom('Error sending text message')
+					});
 			}
 		});
 		navigateButton.addEventListener('click', function() {
