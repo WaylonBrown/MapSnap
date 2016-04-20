@@ -1,3 +1,5 @@
+var defaultMessage = "Your driver is on their way! View their drive here: [link]"
+
 angular.module('app.controllers', [])
   
 .controller('startADriveCtrl', function($scope, $cordovaSms) {
@@ -11,17 +13,21 @@ angular.module('app.controllers', [])
 			if (localStorage.getItem("compcode") == undefined) {
 				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
 			} else {
+				if (localStorage.getItem("message") == "undefined") {
+					localStorage.setItem("message", defaultMessage)
+				}
+
 				//send text message
 				var options = {
 		            replaceLineBreaks: false, // true to replace \n by a new line, false by default
 		            android: {
-		                intent: 'INTENT'  // send SMS with the native android SMS messaging
+		                intent: ''  // send SMS with the native android SMS messaging
 		                //intent: '' // send SMS without open any other app
 		            }
 		        };
 
 				$cordovaSms
-					.send('9402935341', 'test', options)
+					.send('9402935341', localStorage.getItem("message"), options)
 					.then(function() {
 						window.plugins.toast.showShortBottom('Text message sent!')
 					}, function(error) {
@@ -61,7 +67,7 @@ angular.module('app.controllers', [])
 
 		//set defaults
 		if (localStorage.getItem("message") == undefined) {
-			localStorage.setItem("message", "Your driver is on their way! View their drive here: [link]")
+			localStorage.setItem("message", defaultMessage)
 		}
 		if (localStorage.getItem("checkbox") == undefined) {
 			localStorage.setItem("checkbox", false)
