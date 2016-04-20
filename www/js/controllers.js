@@ -8,28 +8,25 @@ angular.module('app.controllers', [])
 	var messageElement = document.getElementById("message")
 	var codeElement = document.getElementById("compcode")
 	var checkboxElement = document.getElementById("checkbox").getElementsByTagName('input')[0]
-
-	//input listeners
-	messageElement.addEventListener('input', function() {
-		if (localStorage != undefined) {
-			localStorage.setItem("message", messageElement.value)
-		}
-	});
-	codeElement.addEventListener('input', function() {
-		if (localStorage != undefined) {
-			localStorage.setItem("compcode", codeElement.value)
-		}
-	});
-	checkboxElement.addEventListener('click', function() {
-		console.log(checkboxElement.checked)
-		if (localStorage != undefined) {
-			localStorage.setItem("checkbox", checkboxElement.checked)
-		}
-	});
+	var timeoutElement = document.getElementById("timeout")
 
 	if(localStorage != undefined)
 	{
 		console.log("Local storage supported.");
+
+		//input listeners
+		messageElement.addEventListener('input', function() {
+			localStorage.setItem("message", messageElement.value)
+		});
+		codeElement.addEventListener('input', function() {
+			localStorage.setItem("compcode", codeElement.value)
+		});
+		checkboxElement.addEventListener('click', function() {
+			localStorage.setItem("checkbox", checkboxElement.checked)
+		});
+		timeoutElement.addEventListener('input', function() {
+			localStorage.setItem("timeout", timeoutElement.value)
+		});
 
 		//set defaults
 		if (localStorage.getItem("message") == undefined) {
@@ -41,12 +38,14 @@ angular.module('app.controllers', [])
 		if (localStorage.getItem("compcode") == undefined) {
 			localStorage.setItem("compcode", "")
 		}
+		if (localStorage.getItem("timeout") == undefined) {
+			localStorage.setItem("timeout", "30m")
+		}
 
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
-		var isChecked = localStorage.getItem("checkbox")
-		checkboxElement.checked = isChecked
-		console.log(isChecked)
+		checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
+		timeoutElement.value = localStorage.getItem("timeout")
 	}
 	else
 	{
