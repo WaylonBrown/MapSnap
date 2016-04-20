@@ -12,6 +12,8 @@ angular.module('app.controllers', [])
 		sendTextButton.addEventListener('click', function() {
 			if (localStorage.getItem("compcode") == undefined) {
 				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
+			} else if (isNaN(phoneInput.value)) {
+				window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
 			} else {
 				if (localStorage.getItem("message") == "undefined") {
 					localStorage.setItem("message", defaultMessage)
