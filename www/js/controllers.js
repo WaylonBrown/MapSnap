@@ -1,7 +1,21 @@
 angular.module('app.controllers', [])
   
 .controller('startADriveCtrl', function($scope) {
+	var sendTextButton = document.getElementById("sendTextButton")
+	var navigateButton = document.getElementById("navigateButton")
+	var phoneInput = document.getElementById("phoneInput")
+	var addressInput = document.getElementById("addressInput")
 
+	if(localStorage != undefined) {
+		sendTextButton.addEventListener('click', function() {
+			if (localStorage.getItem("message") == undefined) {
+
+			}
+		});
+		navigateButton.addEventListener('click', function() {
+			window.plugins.toast.showShortBottom('hello')
+		});
+	}
 })
    
 .controller('settingsCtrl', function($scope) {
@@ -30,7 +44,7 @@ angular.module('app.controllers', [])
 
 		//set defaults
 		if (localStorage.getItem("message") == undefined) {
-			localStorage.setItem("message", "Your driver is on their way! View their drive here: www.exampleurl.com")
+			localStorage.setItem("message", "Your driver is on their way! View their drive here: [link]")
 		}
 		if (localStorage.getItem("checkbox") == undefined) {
 			localStorage.setItem("checkbox", false)
@@ -39,7 +53,7 @@ angular.module('app.controllers', [])
 			localStorage.setItem("compcode", "")
 		}
 		if (localStorage.getItem("timeout") == undefined) {
-			localStorage.setItem("timeout", "30m")
+			localStorage.setItem("timeout", "30")
 		}
 
 		messageElement.value = localStorage.getItem("message")
