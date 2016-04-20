@@ -5,7 +5,7 @@
         </div>
         <form class="list">
             <label class="item item-input" name="companycode">
-                <input type="text" placeholder="">
+                <input id="compcode" type="text">
             </label>
         </form>
         <div id="settings-markdown4" style="color:#000000;">
@@ -17,7 +17,7 @@
             </label>
         </form>
         <form class="list">
-            <ion-checkbox name="calling">Allow customer calling</ion-checkbox>
+            <ion-checkbox ng-click="checkboxClicked()" id="checkbox">Allow customer calling</ion-checkbox>
         </form>
         <div id="settings-markdown6" style="color:#000000;">
             <p>Session time-out</p>
