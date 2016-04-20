@@ -44,8 +44,9 @@ angular.module('app.controllers', [])
 
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
-		checkboxElement.checked = localStorage.getItem("checkbox")
-		console.log(localStorage.getItem("checkbox"))
+		var isChecked = localStorage.getItem("checkbox")
+		checkboxElement.checked = isChecked
+		console.log(isChecked)
 	}
 	else
 	{
