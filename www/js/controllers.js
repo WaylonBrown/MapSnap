@@ -12,7 +12,7 @@ angular.module('app.controllers', [])
 		sendTextButton.addEventListener('click', function() {
 			if (localStorage.getItem("compcode") == undefined) {
 				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
-			} else if (isNaN(phoneInput.value)) {
+			} else if (phoneInput.value == "" || isNaN(phoneInput.value)) {
 				window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
 			} else {
 				if (localStorage.getItem("message") == "undefined") {
@@ -23,7 +23,7 @@ angular.module('app.controllers', [])
 				var options = {
 		            replaceLineBreaks: false, // true to replace \n by a new line, false by default
 		            android: {
-		                //intent: 'INTENT'  // send SMS with the native android SMS messaging
+		                // intent: 'INTENT'  // send SMS with the native android SMS messaging
 		                intent: '' // send SMS without open any other app
 		            }
 		        };
