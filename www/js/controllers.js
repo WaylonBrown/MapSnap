@@ -38,9 +38,12 @@ angular.module('app.controllers', [])
 			}
 		};
 	var button1NavigateClickListener = function() {
-			window.plugins.toast.showShortBottom('Opening maps...' + " geo:0,0?q=" + encodeURIComponent(savedAddressInput));
-			//android
-			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
+			window.plugins.toast.showShortBottom('Opening maps...');
+			if (device.platform = "Android") {
+				window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
+			} else if (device.platform = "iOS") {
+				window.open('maps://?q=daddr='+destination);
+			}
 		};
 
 	if(localStorage != undefined) {
