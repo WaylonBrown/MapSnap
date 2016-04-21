@@ -20,15 +20,29 @@ angular.module('app.controllers', [])
 				//get address coordinates
 				var xmlHttp = new XMLHttpRequest();
 			    xmlHttp.onreadystatechange = function() { 
-			        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			            window.plugins.toast.showShortBottom(xmlHttp.response)
+			        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
+			            	window.plugins.toast.showShortBottom("Address not found");
+			            } else {
+			            	var jsonLocation = JSON.parse(xmlHttp.response).results[0].geometry.location;
+				            if (jsonLocation.lat != "" && jsonLocation.lng != "") {
+				            	sendText(jsonLocation);
+				            }
+			            }
+			        }
 			    }
 			    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=5707%20dogwood%20ave.%20Rosamond,%20CA&sensor=false", true); // true for asynchronous 
 			    xmlHttp.send(null);
+			}
+		});
+		navigateButton.addEventListener('click', function() {
+			window.plugins.toast.showShortBottom('hello')
+		});
+	}
 
-
-
-				if (localStorage.getItem("message") == "undefined") {
+	function sendText(jsonLocation) {
+		window.plugins.toast.showShortBottom(jsonLocation.lat + "," + jsonLocation.lng);
+		if (localStorage.getItem("message") == "undefined") {
 					localStorage.setItem("message", defaultMessage)
 				}
 
@@ -42,7 +56,7 @@ angular.module('app.controllers', [])
 		        };
 
 				$cordovaSms
-					.send(phoneInput.value, localStorage.getItem("message"), options)
+					.send("9402935341", localStorage.getItem("message"), options)
 					.then(function() {
 						window.plugins.toast.showShortBottom('Text message sent!')
 					}, function(error) {
@@ -87,11 +101,6 @@ angular.module('app.controllers', [])
 
 				//Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
 				bgLocationServices.start();
-			}
-		});
-		navigateButton.addEventListener('click', function() {
-			window.plugins.toast.showShortBottom('hello')
-		});
 	}
 })
    
