@@ -14,7 +14,20 @@ angular.module('app.controllers', [])
 				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
 			} else if (phoneInput.value == "" || isNaN(phoneInput.value)) {
 				window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
+			} else if (addressInput.value == "") {
+				window.plugins.toast.showShortBottom('Enter a valid address')
 			} else {
+				//get address coordinates
+				var xmlHttp = new XMLHttpRequest();
+			    xmlHttp.onreadystatechange = function() { 
+			        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+			            window.plugins.toast.showShortBottom(xmlHttp.response)
+			    }
+			    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=5707%20dogwood%20ave.%20Rosamond,%20CA&sensor=false", true); // true for asynchronous 
+			    xmlHttp.send(null);
+
+
+
 				if (localStorage.getItem("message") == "undefined") {
 					localStorage.setItem("message", defaultMessage)
 				}
@@ -50,7 +63,7 @@ angular.module('app.controllers', [])
 				     interval: 10000, // (Milliseconds) Requested Interval in between location updates.
 				     //Android Only
 				     notificationTitle: 'Where They At', // customize the title of the notification
-				     notificationText: 'Sharing location, tap to stop sharing', //customize the text of the notification
+				     notificationText: 'Sharing location, tap to open', //customize the text of the notification
 				     fastestInterval: 7000, // <-- (Milliseconds) Fastest interval your app / server can handle updates
 				     useActivityDetection: true // Uses Activitiy detection to shut off gps when you are still (Greatly enhances Battery Life)
 				});
@@ -58,7 +71,7 @@ angular.module('app.controllers', [])
 				//Register a callback for location updates, this is where location objects will be sent in the background
 				bgLocationServices.registerForLocationUpdates(function(location) {
 				     //console.log("We got a BG Update in registerForLocationUpdates" + JSON.stringify(location));
-				     console.log("We got a BG Update in registerForLocationUpdates" + location.latitude);
+				     console.log("We got a BG Update in registerForLocationUpdates " + location.latitude);
 				}, function(err) {
 				     console.log("Error: Didnt get an update", err);
 				});
