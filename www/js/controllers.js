@@ -8,7 +8,7 @@ angular.module('app.controllers', [])
 	var button2 = document.getElementById("button2")
 	var phoneInput = document.getElementById("phoneInput")
 	var addressInput = document.getElementById("addressInput")
-	var jsonLocation;
+	var savedAddressInput;
 
 	var button1DefaultClickListener = function() {
 			if (localStorage.getItem("compcode") == undefined) {
@@ -25,9 +25,10 @@ angular.module('app.controllers', [])
 			        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
 			            	window.plugins.toast.showShortBottom("Address not found");
 			            } else {
-			            	jsonLocation = JSON.parse(xmlHttp.response).results[0].geometry.location;
+			            	var jsonLocation = JSON.parse(xmlHttp.response).results[0].geometry.location;
 				            if (jsonLocation.lat != "" && jsonLocation.lng != "") {
-				            	sendText(jsonLocation, addressInput.value);
+				            	savedAddressInput = addressInput.value
+				            	sendText(savedAddressInput);
 				            }
 			            }
 			        }
@@ -37,9 +38,9 @@ angular.module('app.controllers', [])
 			}
 		};
 	var button1NavigateClickListener = function() {
-			window.plugins.toast.showShortBottom('Opening maps...');
+			window.plugins.toast.showShortBottom('Opening maps...' + " geo:0,0?q=" + encodeURIComponent(savedAddressInput));
 			//android
-			window.open("geo:" + jsonLocation.lat + "," + jsonLocation.lng);
+			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
 		};
 
 	if(localStorage != undefined) {
@@ -50,7 +51,7 @@ angular.module('app.controllers', [])
 	}
 
 	//jsonLocation.lat and jsonLocation.lng
-	function sendText(jsonLocation, addressString) {
+	function sendText(addressString) {
 		if (localStorage.getItem("message") == "undefined") {
 			localStorage.setItem("message", defaultMessage)
 		}
