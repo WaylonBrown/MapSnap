@@ -11,6 +11,7 @@ angular.module('app.controllers', [])
 	var savedAddressInput;
 	var foregroundGPSWatchID;
 	var bgLocationServices;
+	var destinationCoordinates;
 
 	button2.style.display="none";
 
@@ -34,16 +35,17 @@ angular.module('app.controllers', [])
 		            	window.plugins.toast.showShortBottom("Address not found");
 		            	button1.innerText = "Start Drive";
 		            } else {
-		            	var jsonLocation = JSON.parse(xmlHttp.response).results[0].geometry.location;
-			            if (jsonLocation.lat != "" && jsonLocation.lng != "") {
+		            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
+			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
 			            	savedAddressInput = addressInput.value
 			            	sendText(savedAddressInput);
 			            }
 		            }
 		        }
 		    }
-		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=5707%20dogwood%20ave.%20Rosamond,%20CA&sensor=false", true); // true for asynchronous 
+		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
 		    xmlHttp.send(null);
+		    window.plugins.toast.showShortBottom("http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false");
 		}
 	};
 	var button1NavigateClickListener = function() {
@@ -56,6 +58,10 @@ angular.module('app.controllers', [])
 	};
 	//stop drive
 	var button2ClickListener = function() {
+		stopGPSPolling();
+	};
+
+	function stopGPSPolling() {
 		navigator.geolocation.clearWatch(foregroundGPSWatchID);
 		bgLocationServices.stop();
 		isGPSPolling = false;
@@ -64,7 +70,7 @@ angular.module('app.controllers', [])
 		button1.removeEventListener('click', button1NavigateClickListener);
 		button1.addEventListener('click', button1DefaultClickListener);
 		button2.style.display="none";
-	};
+	}
 
 	if(localStorage != undefined) {
 		button1.addEventListener('click', button1DefaultClickListener);
@@ -157,6 +163,21 @@ angular.module('app.controllers', [])
 
 		//Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
 		bgLocationServices.start();
+	}
+
+	//distance between two coordinates in miles
+	function distance(lat1, lon1, lat2, lon2) {
+		var radlat1 = Math.PI * lat1/180
+		var radlat2 = Math.PI * lat2/180
+		var theta = lon1-lon2
+		var radtheta = Math.PI * theta/180
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		dist = Math.acos(dist)
+		dist = dist * 180/Math.PI
+		dist = dist * 60 * 1.1515
+		if (unit=="K") { dist = dist * 1.609344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		return dist
 	}
 })
    
