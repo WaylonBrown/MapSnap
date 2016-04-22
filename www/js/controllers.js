@@ -13,6 +13,7 @@ angular.module('app.controllers', [])
 	var foregroundGPSWatchID;
 	var bgLocationServices;
 	var destinationCoordinates;
+	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
 
 	button2.style.display="none";
 
@@ -39,6 +40,10 @@ angular.module('app.controllers', [])
 		            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
 			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
 			            	savedAddressInput = addressInput.value
+			            	firebaseDB.update({destinationAddress: savedAddressInput, 
+			            		destinationLatitude: destinationCoordinates.lat, 
+			            		destinationLongitude: destinationCoordinates.lng,
+			            		timeStamp: Date.now()});
 			            	sendText(savedAddressInput);
 			            }
 		            }
@@ -115,6 +120,7 @@ angular.module('app.controllers', [])
 
 		function onSuccess(position) {
 			//window.plugins.toast.showShortBottom('Foreground location updated');
+			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
 			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 			if (dist < DISTANCE_THRESSHOLD) {
 				endSession();
@@ -150,6 +156,7 @@ angular.module('app.controllers', [])
 		bgLocationServices.registerForLocationUpdates(function(location) {
 		     //console.log("We got a BG Update in registerForLocationUpdates" + JSON.stringify(location));
 		     console.log("We got a BG Update in registerForLocationUpdates.");
+		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 		     if (dist < DISTANCE_THRESSHOLD) {
 				endSession();
@@ -163,6 +170,7 @@ angular.module('app.controllers', [])
 		//See here for more information: //https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
 		bgLocationServices.registerForActivityUpdates(function(activities) {
 		     console.log("We got a BG Update in registerForActivityUpdates" + activities);
+		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 		     if (dist < DISTANCE_THRESSHOLD) {
 				endSession();
