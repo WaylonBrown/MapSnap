@@ -1,5 +1,6 @@
 var defaultMessage = "Your driver is on their way! View their drive here: [link]"
 var isGPSPolling = false
+var DISTANCE_THRESSHOLD = 0.22; //in miles, distance where it'll end the session
 
 angular.module('app.controllers', [])
   
@@ -45,7 +46,6 @@ angular.module('app.controllers', [])
 		    }
 		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
 		    xmlHttp.send(null);
-		    window.plugins.toast.showShortBottom("http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false");
 		}
 	};
 	var button1NavigateClickListener = function() {
@@ -60,6 +60,13 @@ angular.module('app.controllers', [])
 	var button2ClickListener = function() {
 		stopGPSPolling();
 	};
+	var smsOptions = {
+        replaceLineBreaks: false, // true to replace \n by a new line, false by default
+        android: {
+            // intent: 'INTENT'  // send SMS with the native android SMS messaging
+            intent: '' // send SMS without open any other app
+        }
+    };
 
 	function stopGPSPolling() {
 		navigator.geolocation.clearWatch(foregroundGPSWatchID);
@@ -83,17 +90,8 @@ angular.module('app.controllers', [])
 			localStorage.setItem("message", defaultMessage)
 		}
 
-		//send text message
-		var options = {
-            replaceLineBreaks: false, // true to replace \n by a new line, false by default
-            android: {
-                // intent: 'INTENT'  // send SMS with the native android SMS messaging
-                intent: '' // send SMS without open any other app
-            }
-        };
-
 		$cordovaSms
-			.send("9402935341", localStorage.getItem("message"), options)
+			.send("9402935341", localStorage.getItem("message"), smsOptions)
 			.then(function() {
 				window.plugins.toast.showShortBottom('Text message sent!')
 				startGPS();
@@ -116,7 +114,11 @@ angular.module('app.controllers', [])
 		//navigator.geolocation.getCurrentPosition(function(position) { }, function(error) { });
 
 		function onSuccess(position) {
-			window.plugins.toast.showShortBottom('Foreground location updated: ' + position.coords.latitude + "," + position.coords.longitude);
+			//window.plugins.toast.showShortBottom('Foreground location updated');
+			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+			if (dist < DISTANCE_THRESSHOLD) {
+				endSession();
+			}
 		}
 
 		// onError Callback receives a PositionError object
@@ -147,7 +149,11 @@ angular.module('app.controllers', [])
 		//Register a callback for location updates, this is where location objects will be sent in the background
 		bgLocationServices.registerForLocationUpdates(function(location) {
 		     //console.log("We got a BG Update in registerForLocationUpdates" + JSON.stringify(location));
-		     console.log("We got a BG Update in registerForLocationUpdates " + location.latitude);
+		     console.log("We got a BG Update in registerForLocationUpdates.");
+		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+		     if (dist < DISTANCE_THRESSHOLD) {
+				endSession();
+			 }
 		}, function(err) {
 		     console.log("Error: Didnt get an update", err);
 		});
@@ -157,12 +163,26 @@ angular.module('app.controllers', [])
 		//See here for more information: //https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
 		bgLocationServices.registerForActivityUpdates(function(activities) {
 		     console.log("We got a BG Update in registerForActivityUpdates" + activities);
+		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+		     if (dist < DISTANCE_THRESSHOLD) {
+				endSession();
+			 }
 		}, function(err) {
 		     console.log("Error: Something went wrong", err);
 		});
 
 		//Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
 		bgLocationServices.start();
+	}
+
+	function endSession() {
+		stopGPSPolling();
+		window.plugins.toast.showShortBottom("Sending an arrival text and stopping location sharing");
+		$cordovaSms
+			.send("9402935341", "Your driver is arriving soon!", smsOptions)
+			.then(function() {
+			}, function(error) {
+			});
 	}
 
 	//distance between two coordinates in miles
@@ -175,8 +195,7 @@ angular.module('app.controllers', [])
 		dist = Math.acos(dist)
 		dist = dist * 180/Math.PI
 		dist = dist * 60 * 1.1515
-		if (unit=="K") { dist = dist * 1.609344 }
-		if (unit=="N") { dist = dist * 0.8684 }
+		window.plugins.toast.showShortBottom("From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
 		return dist
 	}
 })
