@@ -1,5 +1,5 @@
 var defaultMessage = "Your driver is on their way! View their drive here: [link]"
-var isReadyToNavigate = false
+var isGPSPolling = false
 
 angular.module('app.controllers', [])
   
@@ -9,48 +9,66 @@ angular.module('app.controllers', [])
 	var phoneInput = document.getElementById("phoneInput")
 	var addressInput = document.getElementById("addressInput")
 	var savedAddressInput;
+	var foregroundGPSWatchID;
+	var bgLocationServices;
+
+	button2.style.display="none";
 
 	var button1DefaultClickListener = function() {
-			if (localStorage.getItem("compcode") == undefined) {
-				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
-			} else if (phoneInput.value == "" || isNaN(phoneInput.value)) {
-				window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
-			} else if (addressInput.value == "") {
-				window.plugins.toast.showShortBottom('Enter a valid address')
-			} else {
-				//get address coordinates
-				var xmlHttp = new XMLHttpRequest();
-			    xmlHttp.onreadystatechange = function() { 
-			        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-			        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
-			            	window.plugins.toast.showShortBottom("Address not found");
-			            } else {
-			            	var jsonLocation = JSON.parse(xmlHttp.response).results[0].geometry.location;
-				            if (jsonLocation.lat != "" && jsonLocation.lng != "") {
-				            	savedAddressInput = addressInput.value
-				            	sendText(savedAddressInput);
-				            }
+		button1.innerText = "Sending text...";
+		if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
+			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
+			button1.innerText = "Start Drive";
+		} else if (phoneInput.value == "" || isNaN(phoneInput.value)) {
+			window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
+			button1.innerText = "Start Drive";
+		} else if (addressInput.value == "") {
+			window.plugins.toast.showShortBottom('Enter a valid address')
+			button1.innerText = "Start Drive";
+		} else {
+			//get address coordinates
+			var xmlHttp = new XMLHttpRequest();
+		    xmlHttp.onreadystatechange = function() { 
+		        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+		        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
+		            	window.plugins.toast.showShortBottom("Address not found");
+		            	button1.innerText = "Start Drive";
+		            } else {
+		            	var jsonLocation = JSON.parse(xmlHttp.response).results[0].geometry.location;
+			            if (jsonLocation.lat != "" && jsonLocation.lng != "") {
+			            	savedAddressInput = addressInput.value
+			            	sendText(savedAddressInput);
 			            }
-			        }
-			    }
-			    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=5707%20dogwood%20ave.%20Rosamond,%20CA&sensor=false", true); // true for asynchronous 
-			    xmlHttp.send(null);
-			}
-		};
+		            }
+		        }
+		    }
+		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=5707%20dogwood%20ave.%20Rosamond,%20CA&sensor=false", true); // true for asynchronous 
+		    xmlHttp.send(null);
+		}
+	};
 	var button1NavigateClickListener = function() {
-			window.plugins.toast.showShortBottom('Opening maps...');
-			if (device.platform = "Android") {
-				window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
-			} else if (device.platform = "iOS") {
-				window.open('maps://?q=daddr='+destination);
-			}
-		};
+		window.plugins.toast.showShortBottom('Opening maps...');
+		if (device.platform = "Android") {
+			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
+		} else if (device.platform = "iOS") {
+			window.open('maps://?q=daddr='+destination);
+		}
+	};
+	//stop drive
+	var button2ClickListener = function() {
+		navigator.geolocation.clearWatch(foregroundGPSWatchID);
+		bgLocationServices.stop();
+		isGPSPolling = false;
+		button1.innerText = "Start Drive";
+		button1.className = "button button-positive button-block";
+		button1.removeEventListener('click', button1NavigateClickListener);
+		button1.addEventListener('click', button1DefaultClickListener);
+		button2.style.display="none";
+	};
 
 	if(localStorage != undefined) {
 		button1.addEventListener('click', button1DefaultClickListener);
-		button2.addEventListener('click', function() {
-			window.plugins.toast.showShortBottom('Stopping drive')
-		});
+		button2.addEventListener('click', button2ClickListener);
 	}
 
 	//jsonLocation.lat and jsonLocation.lng
@@ -79,14 +97,34 @@ angular.module('app.controllers', [])
 	}
 
 	function startGPS() {
-		isReadyToNavigate = true;
+		isGPSPolling = true;
 		button1.innerText = "Navigate";
+		button1.className = "button button-calm button-block";
+		button2.style.display="block"
 		button1.removeEventListener('click', button1DefaultClickListener);
 		button1.addEventListener('click', button1NavigateClickListener);
 
-		navigator.geolocation.getCurrentPosition(function(position) { }, function(error) { });
+		//////////
+		//FOREGROUND GPS
+		//////////
+		//navigator.geolocation.getCurrentPosition(function(position) { }, function(error) { });
 
-		var bgLocationServices = window.plugins.backgroundLocationServices;
+		function onSuccess(position) {
+			window.plugins.toast.showShortBottom('Foreground location updated: ' + position.coords.latitude + "," + position.coords.longitude);
+		}
+
+		// onError Callback receives a PositionError object
+		function onError(error) {
+		    //no location updated in 30s
+		}
+
+		foregroundGPSWatchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000 });
+
+		//////////
+		//BACKGROUND GPS
+		//////////
+
+		bgLocationServices = window.plugins.backgroundLocationServices;
 		bgLocationServices.configure({
 			 //Both
 		     desiredAccuracy: 1, // Desired Accuracy of the location updates (lower means more accurate but more battery consumption)
