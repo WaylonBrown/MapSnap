@@ -17,6 +17,43 @@ angular.module('app.controllers', [])
 	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
 
 	button2.style.display="none";
+	if(localStorage != undefined) {
+		button1.addEventListener('click', button1DefaultClickListener);
+		button2.addEventListener('click', button2ClickListener);
+	}
+
+	//get phone number
+	window.plugins.sim.requestReadPermission();
+	window.plugins.sim.getSimInfo(function(jsonObject) {
+		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
+		phoneNumber = jsonObject.phoneNumber;
+	}, function() {
+		console.log("Error getting phone number");
+	});
+
+	//setup autocomplete
+	var autocomplete = new google.maps.places.Autocomplete(addressInput,
+      {types: ['geocode']});
+	geolocate();
+
+	// Bias the autocomplete object to the user's geographical location,
+	// as supplied by the browser's 'navigator.geolocation' object.
+	function geolocate() {
+		if (navigator.geolocation) {
+		  navigator.geolocation.getCurrentPosition(function(position) {
+		    var geolocation = {
+		      lat: position.coords.latitude,
+		      lng: position.coords.longitude
+		    };
+		    var circle = new google.maps.Circle({
+		      center: geolocation,
+		      radius: position.coords.accuracy
+		    });
+		    autocomplete.setBounds(circle.getBounds());
+		  });
+		}
+	}
+
 
 	var button1DefaultClickListener = function() {
 		button1.innerText = "Sending text...";
@@ -97,20 +134,6 @@ angular.module('app.controllers', [])
 		button1.addEventListener('click', button1DefaultClickListener);
 		button2.style.display="none";
 	}
-
-	if(localStorage != undefined) {
-		button1.addEventListener('click', button1DefaultClickListener);
-		button2.addEventListener('click', button2ClickListener);
-	}
-
-	//get phone number
-	window.plugins.sim.requestReadPermission();
-	window.plugins.sim.getSimInfo(function(jsonObject) {
-		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
-		phoneNumber = jsonObject.phoneNumber;
-	}, function() {
-		console.log("Error getting phone number");
-	});
 
 	//jsonLocation.lat and jsonLocation.lng
 	function sendText(addressString) {
