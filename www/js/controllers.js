@@ -16,6 +16,21 @@ angular.module('app.controllers', [])
 	var phoneNumber;
 	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
 
+	//set local storage defaults
+	if (localStorage.getItem("message") == undefined) {
+		localStorage.setItem("message", defaultMessage)
+	}
+	if (localStorage.getItem("checkbox") == undefined) {
+		localStorage.setItem("checkbox", false)
+	}
+	if (localStorage.getItem("compcode") == undefined) {
+		localStorage.setItem("compcode", "")
+	}
+	if (localStorage.getItem("timeout") == undefined) {
+		localStorage.setItem("timeout", "30")
+	}
+
+	//hack to get clicking on autocomplete working
 	$scope.disableTap = function(){
 	    container = document.getElementsByClassName('pac-container');
 	    // disable ionic data tab
@@ -154,7 +169,7 @@ angular.module('app.controllers', [])
 		}
 
 		$cordovaSms
-			.send("9402935341", localStorage.getItem("message"), smsOptions)
+			.send("9402935341", localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=12345"), smsOptions)
 			.then(function() {
 				window.plugins.toast.showShortBottom('Text message sent!')
 				startGPS();
@@ -289,20 +304,6 @@ angular.module('app.controllers', [])
 		timeoutElement.addEventListener('input', function() {
 			localStorage.setItem("timeout", timeoutElement.value)
 		});
-
-		//set defaults
-		if (localStorage.getItem("message") == undefined) {
-			localStorage.setItem("message", defaultMessage)
-		}
-		if (localStorage.getItem("checkbox") == undefined) {
-			localStorage.setItem("checkbox", false)
-		}
-		if (localStorage.getItem("compcode") == undefined) {
-			localStorage.setItem("compcode", "")
-		}
-		if (localStorage.getItem("timeout") == undefined) {
-			localStorage.setItem("timeout", "30")
-		}
 
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
