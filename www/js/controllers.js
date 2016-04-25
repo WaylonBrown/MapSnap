@@ -13,6 +13,7 @@ angular.module('app.controllers', [])
 	var foregroundGPSWatchID;
 	var bgLocationServices;
 	var destinationCoordinates;
+	var phoneNumber;
 	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
 
 	button2.style.display="none";
@@ -88,6 +89,14 @@ angular.module('app.controllers', [])
 		button1.addEventListener('click', button1DefaultClickListener);
 		button2.addEventListener('click', button2ClickListener);
 	}
+
+	//get phone number
+	window.plugins.sim.requestReadPermission();
+	window.plugins.sim.getSimInfo(function(jsonObject) {
+		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
+	}, function() {
+		console.log("Error getting phone number");
+	});
 
 	//jsonLocation.lat and jsonLocation.lng
 	function sendText(addressString) {
