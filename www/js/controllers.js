@@ -16,6 +16,16 @@ angular.module('app.controllers', [])
 	var phoneNumber;
 	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
 
+	$scope.disableTap = function(){
+	    container = document.getElementsByClassName('pac-container');
+	    // disable ionic data tab
+	    angular.element(container).attr('data-tap-disabled', 'true');
+	    // leave input field if google-address-entry is selected
+	    angular.element(container).on("click", function(){
+	        addressInput.blur();
+	    });
+	  };
+
 	button2.style.display="none";
 	if(localStorage != undefined) {
 		button1.addEventListener('click', button1DefaultClickListener);
