@@ -200,7 +200,7 @@ angular.module('app.controllers', [])
 		//FOREGROUND GPS
 		//////////
 
-		setupForegroundWatch(5000);
+		setupForegroundWatch(7000);
 
 		// sets up the interval at the specified frequency
 		function setupForegroundWatch(freq) {
