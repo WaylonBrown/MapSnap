@@ -50,19 +50,6 @@ angular.module('app.controllers', [])
 		console.log("Error getting phone number");
 	});
 
-	window.onload = function() {
-		button2.style.display="none";
-		if(localStorage != undefined) {
-			button1.addEventListener('click', button1DefaultClickListener);
-			button2.addEventListener('click', button2ClickListener);
-		}
-
-		//setup autocomplete
-		var autocomplete = new google.maps.places.Autocomplete(addressInput,
-	      {types: ['geocode']});
-		geolocate();
-	}
-
 	// Bias the autocomplete object to the user's geographical location,
 	// as supplied by the browser's 'navigator.geolocation' object.
 	function geolocate() {
@@ -189,7 +176,6 @@ angular.module('app.controllers', [])
 		//////////
 		//FOREGROUND GPS
 		//////////
-		//navigator.geolocation.getCurrentPosition(function(position) { }, function(error) { });
 
 		function onSuccess(position) {
 			//window.plugins.toast.showShortBottom('Foreground location updated');
@@ -279,13 +265,23 @@ angular.module('app.controllers', [])
 		//window.plugins.toast.showShortBottom("From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
 		return dist
 	}
+
+	button2.style.display="none";
+	if(localStorage != undefined) {
+		button1.addEventListener('click', button1DefaultClickListener);
+		button2.addEventListener('click', button2ClickListener);
+	}
+
+	//setup autocomplete
+	var autocomplete = new google.maps.places.Autocomplete(addressInput,
+      {types: ['geocode']});
+	geolocate();
 })
    
 .controller('settingsCtrl', function($scope) {
 	var messageElement = document.getElementById("message")
 	var codeElement = document.getElementById("compcode")
 	var checkboxElement = document.getElementById("checkbox").getElementsByTagName('input')[0]
-	var timeoutElement = document.getElementById("timeout")
 
 	if(localStorage != undefined)
 	{
@@ -301,14 +297,10 @@ angular.module('app.controllers', [])
 		checkboxElement.addEventListener('click', function() {
 			localStorage.setItem("checkbox", checkboxElement.checked)
 		});
-		timeoutElement.addEventListener('input', function() {
-			localStorage.setItem("timeout", timeoutElement.value)
-		});
 
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
 		checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
-		timeoutElement.value = localStorage.getItem("timeout")
 	}
 	else
 	{
