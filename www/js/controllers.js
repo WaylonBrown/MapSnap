@@ -40,12 +40,25 @@ angular.module('app.controllers', [])
 		            } else {
 		            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
 			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
-			            	savedAddressInput = addressInput.value
-			            	firebaseDB.update({destinationAddress: savedAddressInput, 
-			            		destinationLatitude: destinationCoordinates.lat, 
-			            		destinationLongitude: destinationCoordinates.lng,
-			            		timeStamp: Date.now()});
-			            	sendText(savedAddressInput);
+			            	navigator.geolocation.getCurrentPosition(function(location) {
+			            		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, location.coords.latitude, location.coords.longitude) < 100) {
+			            			savedAddressInput = addressInput.value
+					            	firebaseDB.update({destinationAddress: savedAddressInput, 
+					            		destinationLatitude: destinationCoordinates.lat, 
+					            		destinationLongitude: destinationCoordinates.lng,
+					            		timeStamp: Date.now()});
+					            	if (phoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
+					            		firebaseDB.update({phoneNumber: phoneNumber});
+					            	}
+					            	sendText(savedAddressInput);
+			            		} else {
+			            			button1.innerText = "Start Drive";
+			            			window.plugins.toast.showLongBottom("Destination is over 100 miles away, if the location is closer be sure to add the city and state to get the correct location.");
+			            		}
+			            	}, function() { 
+			            		button1.innerText = "Start Drive";
+			            		window.plugins.toast.showShortBottom("Couldn't get current location");
+			            	});
 			            }
 		            }
 		        }
@@ -94,6 +107,7 @@ angular.module('app.controllers', [])
 	window.plugins.sim.requestReadPermission();
 	window.plugins.sim.getSimInfo(function(jsonObject) {
 		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
+		phoneNumber = jsonObject.phoneNumber;
 	}, function() {
 		console.log("Error getting phone number");
 	});
@@ -212,7 +226,7 @@ angular.module('app.controllers', [])
 		dist = Math.acos(dist)
 		dist = dist * 180/Math.PI
 		dist = dist * 60 * 1.1515
-		window.plugins.toast.showShortBottom("From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
+		//window.plugins.toast.showShortBottom("From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
 		return dist
 	}
 })
