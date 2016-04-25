@@ -266,6 +266,10 @@ angular.module('app.controllers', [])
 		return dist
 	}
 
+
+	/***********
+	Actual code
+	***********/
 	button2.style.display="none";
 	if(localStorage != undefined) {
 		button1.addEventListener('click', button1DefaultClickListener);
