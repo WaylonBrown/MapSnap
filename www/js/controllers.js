@@ -11,9 +11,12 @@ angular.module('app.controllers', [])
 	var addressInput = document.getElementById("addressInput")
 	var savedAddressInput;
 	var foregroundGPSWatchID;
+	var activeForegroundWatcher;
 	var bgLocationServices;
 	var destinationCoordinates;
 	var phoneNumber;
+	var deviceLatitude;
+	var deviceLongitude;
 	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
 
 	//set local storage defaults
@@ -55,6 +58,8 @@ angular.module('app.controllers', [])
 	function geolocate() {
 		if (navigator.geolocation) {
 		  navigator.geolocation.getCurrentPosition(function(position) {
+		  	deviceLatitude = position.coords.latitude;
+		  	deviceLongitude = position.coords.longitude;
 		    var geolocation = {
 		      lat: position.coords.latitude,
 		      lng: position.coords.longitude
@@ -64,6 +69,8 @@ angular.module('app.controllers', [])
 		      radius: position.coords.accuracy
 		    });
 		    autocomplete.setBounds(circle.getBounds());
+		  }, function() {
+		  	window.plugins.toast.showShortBottom("Couldn't get device's location");
 		  });
 		}
 	}
@@ -90,26 +97,24 @@ angular.module('app.controllers', [])
 		            	button1.innerText = "Start Drive";
 		            } else {
 		            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
+		            	//destination coordinates found
 			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
-			            	navigator.geolocation.getCurrentPosition(function(location) {
-			            		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, location.coords.latitude, location.coords.longitude) < 100) {
-			            			savedAddressInput = addressInput.value
-					            	firebaseDB.update({destinationAddress: savedAddressInput, 
-					            		destinationLatitude: destinationCoordinates.lat, 
-					            		destinationLongitude: destinationCoordinates.lng,
-					            		timeStamp: Date.now()});
-					            	if (phoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
-					            		firebaseDB.update({phoneNumber: phoneNumber});
-					            	}
-					            	sendText(savedAddressInput);
-			            		} else {
-			            			button1.innerText = "Start Drive";
-			            			window.plugins.toast.showLongBottom("Destination is over 100 miles away, if the location is closer be sure to add the city and state to get the correct location.");
-			            		}
-			            	}, function() { 
-			            		button1.innerText = "Start Drive";
-			            		window.plugins.toast.showShortBottom("Couldn't get current location");
-			            	});
+			            	//initial device location found
+			            	if (deviceLatitude != undefined && deviceLongitude != undefined) {
+			            		seeIfDestinationNearby();
+			            	} else {	//initial device location not found
+				            	navigator.geolocation.getCurrentPosition(function(location) {
+				            		deviceLatitude = location.coords.latitude;
+				            		deviceLongitude = location.coords.longitude;
+				            		seeIfDestinationNearby()
+				            	}, function() { 
+				            		button1.innerText = "Start Drive";
+				            		window.plugins.toast.showShortBottom("Couldn't get current location");
+				            	});
+			            	}
+			            } else {	//destination coordinates not found
+			            	button1.innerText = "Start Drive";
+		            		window.plugins.toast.showLongBottom("Couldn't find destination location");
 			            }
 		            }
 		        }
@@ -138,8 +143,26 @@ angular.module('app.controllers', [])
         }
     };
 
+    function seeIfDestinationNearby() {
+    	//destination is nearby
+		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, deviceLatitude, deviceLongitude) < 100) {
+			savedAddressInput = addressInput.value
+        	firebaseDB.update({destinationAddress: savedAddressInput, 
+        		destinationLatitude: destinationCoordinates.lat, 
+        		destinationLongitude: destinationCoordinates.lng,
+        		timeStamp: Date.now()});
+        	if (phoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
+        		firebaseDB.update({phoneNumber: phoneNumber});
+        	}
+        	sendText(savedAddressInput);
+		} else {	//destination is too far away
+			button1.innerText = "Start Drive";
+			window.plugins.toast.showLongBottom("Destination is over 100 miles away, if the location is closer be sure to add the city and state to get the correct location.");
+		}
+    }
+
 	function stopGPSPolling() {
-		navigator.geolocation.clearWatch(foregroundGPSWatchID);
+		clearInterval(activeForegroundWatcher);
 		bgLocationServices.stop();
 		isGPSPolling = false;
 		button1.innerText = "Start Drive";
@@ -177,21 +200,33 @@ angular.module('app.controllers', [])
 		//FOREGROUND GPS
 		//////////
 
-		function onSuccess(position) {
-			//window.plugins.toast.showShortBottom('Foreground location updated');
+		setupForegroundWatch(5000);
+
+		// sets up the interval at the specified frequency
+		function setupForegroundWatch(freq) {
+		    // global var here so it can be cleared on logout (or whenever).
+		    activeForegroundWatcher = setInterval(watchLocation, freq);
+		}
+
+		function onLocationError(error) {}
+
+		// this is what gets called on the interval.
+		function watchLocation() {
+		    var gcp = navigator.geolocation.getCurrentPosition(
+	            updateUserLocation, onLocationError, {
+	                enableHighAccuracy: true
+	            });
+
+		}
+
+		function updateUserLocation(position) {
 			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
 			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 			if (dist < DISTANCE_THRESSHOLD) {
 				endSession();
 			}
+			window.plugins.toast.showShortBottom('Location updated in foreground');
 		}
-
-		// onError Callback receives a PositionError object
-		function onError(error) {
-		    //no location updated in 30s
-		}
-
-		foregroundGPSWatchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000 });
 
 		//////////
 		//BACKGROUND GPS
