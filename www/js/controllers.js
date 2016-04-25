@@ -26,13 +26,7 @@ angular.module('app.controllers', [])
 	    });
 	  };
 
-	button2.style.display="none";
-	if(localStorage != undefined) {
-		button1.addEventListener('click', button1DefaultClickListener);
-		button2.addEventListener('click', button2ClickListener);
-	}
-
-	//get phone number
+  	//get phone number
 	window.plugins.sim.requestReadPermission();
 	window.plugins.sim.getSimInfo(function(jsonObject) {
 		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
@@ -41,10 +35,18 @@ angular.module('app.controllers', [])
 		console.log("Error getting phone number");
 	});
 
-	//setup autocomplete
-	var autocomplete = new google.maps.places.Autocomplete(addressInput,
-      {types: ['geocode']});
-	geolocate();
+	window.onload = function() {
+		button2.style.display="none";
+		if(localStorage != undefined) {
+			button1.addEventListener('click', button1DefaultClickListener);
+			button2.addEventListener('click', button2ClickListener);
+		}
+
+		//setup autocomplete
+		var autocomplete = new google.maps.places.Autocomplete(addressInput,
+	      {types: ['geocode']});
+		geolocate();
+	}
 
 	// Bias the autocomplete object to the user's geographical location,
 	// as supplied by the browser's 'navigator.geolocation' object.
