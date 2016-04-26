@@ -1,7 +1,7 @@
 {
-  "name": "WhereTheyAt",
+  "name": "MapSnap",
   "version": "1.1.1",
-  "description": "WhereTheyAt: An Ionic project",
+  "description": "MapSnap",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",

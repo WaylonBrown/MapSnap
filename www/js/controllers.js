@@ -73,7 +73,7 @@ angular.module('app.controllers', [])
 		      radius: position.coords.accuracy
 		    });
 		    autocomplete.setBounds(circle.getBounds());
-		  }, function(error) {}, {timeout: 5000});
+		  }, function(error) {}, {timeout: 7000});
 		}
 	}
 
@@ -200,12 +200,6 @@ angular.module('app.controllers', [])
 		}
     }
 
-	function stopGPSPolling() {
-		clearInterval(activeForegroundWatcher);
-		bgLocationServices.stop();
-		setStateReadyForDrive();
-	}
-
 	//jsonLocation.lat and jsonLocation.lng
 	function sendText(addressString) {
 		setStateSendingText();
@@ -277,6 +271,12 @@ angular.module('app.controllers', [])
 		}
 	}
 
+	function stopGPSPolling() {
+		clearInterval(activeForegroundWatcher);
+		bgLocationServices.stop();
+		setStateReadyForDrive();
+	}
+
 	function startGPS() {
 		setStateDriveActive();
 
@@ -308,7 +308,7 @@ angular.module('app.controllers', [])
 			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
 			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 			checkDistanceThreshold();
-			window.plugins.toast.showShortBottom('Location updated in foreground');
+			//window.plugins.toast.showShortBottom('Location updated in foreground');
 		}
 
 		//////////
@@ -319,7 +319,7 @@ angular.module('app.controllers', [])
 		bgLocationServices.configure({
 			 //Both
 		     desiredAccuracy: 1, // Desired Accuracy of the location updates (lower means more accurate but more battery consumption)
-		     distanceFilter: 5, // (Meters) How far you must move from the last point to trigger a location update
+		     distanceFilter: 10, // (Meters) How far you must move from the last point to trigger a location update
 		     debug: true, // <-- Enable to show visual indications when you receive a background location update
 		     interval: 10000, // (Milliseconds) Requested Interval in between location updates.
 		     //Android Only
@@ -344,10 +344,10 @@ angular.module('app.controllers', [])
 		//Uses the Detected Activies API to send back an array of activities and their confidence levels
 		//See here for more information: //https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
 		bgLocationServices.registerForActivityUpdates(function(activities) {
-		     console.log("We got a BG Update in registerForActivityUpdates" + activities);
-		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
-		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-		     checkDistanceThreshold();
+		     // console.log("We got a BG Update in registerForActivityUpdates" + activities);
+		     // firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
+		     // var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+		     // checkDistanceThreshold();
 		}, function(err) {
 		     console.log("Error: Something went wrong", err);
 		});
