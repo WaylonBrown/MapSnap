@@ -176,8 +176,12 @@ angular.module('app.controllers', [])
     }
 
     function needsUpdatedLocation() {
+    	if (lastTimeDeviceLocation == undefined) {
+    		return true;
+    	}
     	var now = new Date().getTime();
     	var secondsPast = (now - lastTimeDeviceLocation) / 1000;
+    	console.log("Seconds past: " + secondsPast + ", now: " + now + ", lastTimeDeviceLocation: " + lastTimeDeviceLocation);
     	if (secondsPast >= 1) {
     		return true;
     	}
@@ -428,11 +432,6 @@ angular.module('app.controllers', [])
 		        addressInput.blur();
 		    });
 		  };
-
-		  // var $addressInput = $(addressInput);
-    //             if (addressInput.nodeName.toLowerCase() === 'input' && addressInput.type === 'file') return false;
-    //             if ($addressInput.hasClass('no-fastclick') || $addressInput.parents('.no-fastclick').length > 0) return false;
-    //             return true;
 	}
 
 
