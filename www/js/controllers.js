@@ -9,6 +9,8 @@ angular.module('app.controllers', [])
 	var button2 = document.getElementById("button2")
 	var phoneInput = document.getElementById("phoneInput")
 	var addressInput = document.getElementById("addressInput")
+	var clearText1 = document.getElementById("clearText1")
+	var clearText2 = document.getElementById("clearText2")
 	var savedAddressInput;
 	var foregroundGPSWatchID;
 	var activeForegroundWatcher;
@@ -379,6 +381,29 @@ angular.module('app.controllers', [])
 		button1.addEventListener('click', button1DefaultClickListener);
 		button2.addEventListener('click', button2ClickListener);
 	}
+	clearText1.addEventListener('click', function() {
+		phoneInput.value = "";
+		clearText1.style.display = "none";
+	});
+	clearText2.addEventListener('click', function() {
+		addressInput.value = "";
+		clearText2.style.display = "none";
+	});
+	phoneInput.addEventListener('input', function() {
+		if (phoneInput.value.length > 0) {
+			clearText1.style.display = "block";
+		} else {
+			clearText1.style.display = "none";
+		}
+	});
+	addressInput.addEventListener('input', function() {
+		if (addressInput.value.length > 0) {
+			clearText2.style.display = "block";
+		} else {
+			clearText2.style.display = "none";
+		}
+	});
+
 
 	//setup autocomplete
 	var autocomplete = new google.maps.places.Autocomplete(addressInput,
