@@ -36,9 +36,6 @@ angular.module('app.controllers', [])
 	if (localStorage.getItem("compcode") == undefined) {
 		localStorage.setItem("compcode", "")
 	}
-	if (localStorage.getItem("timeout") == undefined) {
-		localStorage.setItem("timeout", "30")
-	}
 
 	//hack to get clicking on autocomplete working
 	$scope.disableTap = function(){
@@ -199,7 +196,7 @@ angular.module('app.controllers', [])
 
     function seeIfDestinationNearby() {
     	//destination is nearby
-		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, deviceLatitude, deviceLongitude) < 100) {
+		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, deviceLatitude, deviceLongitude) < 300) {
 			console.log("Destination is nearby");
 			savedAddressInput = addressInput.value
         	firebaseDB.update({destinationAddress: savedAddressInput, 
@@ -215,7 +212,7 @@ angular.module('app.controllers', [])
         	sendText(savedAddressInput);
 		} else {	//destination is too far away
 			setStateReadyForDrive();
-			window.plugins.toast.showLongBottom("Destination is over 100 miles away, if the location is closer be sure to add the city and state to get the correct location.");
+			window.plugins.toast.showLongBottom("Destination is over 300 miles away, if the location is closer be sure to add the city and state to get the correct location.");
 		}
     }
 
@@ -223,8 +220,8 @@ angular.module('app.controllers', [])
 	function sendText(addressString) {
 		setStateSendingText();
 		console.log("Sending SMS...");
-		if (localStorage.getItem("message") == "undefined") {
-			localStorage.setItem("message", defaultMessage)
+		if (localStorage.getItem("message") == "undefined" || localStorage.getItem("message") == "") {
+			localStorage.setItem("message", defaultMessage);
 		}
 
 		$cordovaSms
@@ -394,7 +391,6 @@ angular.module('app.controllers', [])
 		//window.plugins.toast.showShortBottom("From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
 		return dist
 	}
-
 
 	/***********
 	Actual code
