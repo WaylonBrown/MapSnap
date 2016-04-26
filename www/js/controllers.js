@@ -16,6 +16,7 @@ angular.module('app.controllers', [])
 	var phoneNumber;
 	var deviceLatitude;
 	var deviceLongitude;
+	var companyName;
 	var sessionID;
 	var firebaseDB;
 
@@ -109,7 +110,10 @@ angular.module('app.controllers', [])
   				var companyExists = snapshot.exists();
   				if (companyExists) {
   					setStateGettingLocation();
-  					checkValuesForDrive(companyCodeDB);
+  					var dataObject = companyCodeDB.on("value", function(snapshot) {
+          				companyName = snapshot.val().name;
+          			});
+  					checkValuesForDrive();
   				} else {
   					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly. It is case sensitive.")
 					setStateReadyForDrive();
@@ -118,7 +122,7 @@ angular.module('app.controllers', [])
 		}
 	}
 
-	function checkValuesForDrive(companyDB) {
+	function checkValuesForDrive() {
     	if (phoneInput.value == "" || isNaN(phoneInput.value)) {
 			window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
 			setStateReadyForDrive();
@@ -180,6 +184,7 @@ angular.module('app.controllers', [])
         		destinationLongitude: destinationCoordinates.lng,
         		currentLatitude: deviceLatitude,
         		currentLongitude: deviceLongitude,
+        		companyName: companyName,
         		timeStamp: Date.now()});
         	if (phoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
         		firebaseDB.update({phoneNumber: phoneNumber});
