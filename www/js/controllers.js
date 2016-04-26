@@ -429,10 +429,10 @@ angular.module('app.controllers', [])
 		    });
 		  };
 
-		  var $addressInput = $(addressInput);
-                if (addressInput.nodeName.toLowerCase() === 'input' && addressInput.type === 'file') return false;
-                if ($addressInput.hasClass('no-fastclick') || $addressInput.parents('.no-fastclick').length > 0) return false;
-                return true;
+		  // var $addressInput = $(addressInput);
+    //             if (addressInput.nodeName.toLowerCase() === 'input' && addressInput.type === 'file') return false;
+    //             if ($addressInput.hasClass('no-fastclick') || $addressInput.parents('.no-fastclick').length > 0) return false;
+    //             return true;
 	}
 
 
