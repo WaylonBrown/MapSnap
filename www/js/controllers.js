@@ -1,5 +1,6 @@
 var defaultMessage = "Your driver is on their way! View their drive here: [link]";
-var DISTANCE_THRESSHOLD = 0.22; //in miles, distance where it'll end the session
+var DISTANCE_SMS_THRESHOLD = 0.25; //in miles, distance where it'll send second SMS
+var DISTANCE_END_THRESHOLD = 0.07; //in miles, distance where it'll end the session
 
 angular.module('app.controllers', [])
   
@@ -13,12 +14,14 @@ angular.module('app.controllers', [])
 	var activeForegroundWatcher;
 	var bgLocationServices;
 	var destinationCoordinates;
-	var phoneNumber;
+	var driverPhoneNumber;
+	var customerPhoneNumber;
 	var deviceLatitude;
 	var deviceLongitude;
 	var companyName;
 	var sessionID;
 	var firebaseDB;
+	var sentSecondSMS = false;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -49,7 +52,7 @@ angular.module('app.controllers', [])
 	window.plugins.sim.requestReadPermission();
 	window.plugins.sim.getSimInfo(function(jsonObject) {
 		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
-		phoneNumber = jsonObject.phoneNumber;
+		driverPhoneNumber = jsonObject.phoneNumber;
 	}, function() {
 		console.log("Error getting phone number");
 	});
@@ -130,6 +133,7 @@ angular.module('app.controllers', [])
 			window.plugins.toast.showShortBottom('Enter a valid address')
 			setStateReadyForDrive();
 		} else {
+			customerPhoneNumber = phoneInput.value;
 			sessionID = Math.round(Math.random() * 1000000000);
 			var firebaseURL = "https://boiling-fire-1004.firebaseio.com/mapID/" + sessionID;
 			console.log("Generated session ID, firebase URL: " + firebaseURL);
@@ -186,8 +190,8 @@ angular.module('app.controllers', [])
         		currentLongitude: deviceLongitude,
         		companyName: companyName,
         		timeStamp: Date.now()});
-        	if (phoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
-        		firebaseDB.update({phoneNumber: phoneNumber});
+        	if (driverPhoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
+        		firebaseDB.update({driverPhoneNumber: driverPhoneNumber});
         	}
         	sendText(savedAddressInput);
 		} else {	//destination is too far away
@@ -211,7 +215,7 @@ angular.module('app.controllers', [])
 		}
 
 		$cordovaSms
-			.send(phoneInput.value, localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=" + sessionID), smsOptions)
+			.send(customerPhoneNumber, localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=" + sessionID), smsOptions)
 			.then(function() {
 				window.plugins.toast.showShortBottom('Text message sent!');
 				startGPS();
@@ -227,6 +231,7 @@ angular.module('app.controllers', [])
 		button1.removeEventListener('click', button1NavigateClickListener);
 		button1.addEventListener('click', button1DefaultClickListener);
 		button2.style.display="none";
+		sentSecondSMS = false;
 	}
 
 	function setStateVerifyingData() {
@@ -253,6 +258,23 @@ angular.module('app.controllers', [])
 		button2.style.display="block"
 		button1.removeEventListener('click', button1DefaultClickListener);
 		button1.addEventListener('click', button1NavigateClickListener);
+	}
+
+	function checkDistanceThreshold() {
+		if (dist < DISTANCE_SMS_THRESHOLD && !sentSecondSMS) {
+			sentSecondSMS = true;
+			$cordovaSms
+				.send(customerPhoneNumber, "Your driver is arriving soon!", smsOptions)
+				.then(function() { 
+					window.plugins.toast.showShortBottom("Sent an arrival text");
+				}, function(error) {
+					window.plugins.toast.showShortBottom("Failed to send arrival text");
+			});	
+		} else if (dist < DISTANCE_END_THRESHOLD) {
+			sessionID = null;
+			stopGPSPolling();
+			window.plugins.toast.showShortBottom("Arrived, ending session");
+		}
 	}
 
 	function startGPS() {
@@ -285,9 +307,7 @@ angular.module('app.controllers', [])
 		function updateUserLocation(position) {
 			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
 			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-			if (dist < DISTANCE_THRESSHOLD) {
-				endSession();
-			}
+			checkDistanceThreshold();
 			window.plugins.toast.showShortBottom('Location updated in foreground');
 		}
 
@@ -315,9 +335,7 @@ angular.module('app.controllers', [])
 		     console.log("We got a BG Update in registerForLocationUpdates.");
 		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-		     if (dist < DISTANCE_THRESSHOLD) {
-				endSession();
-			 }
+		     checkDistanceThreshold();
 		}, function(err) {
 		     console.log("Error: Didnt get an update", err);
 		});
@@ -329,26 +347,13 @@ angular.module('app.controllers', [])
 		     console.log("We got a BG Update in registerForActivityUpdates" + activities);
 		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-		     if (dist < DISTANCE_THRESSHOLD) {
-				endSession();
-			 }
+		     checkDistanceThreshold();
 		}, function(err) {
 		     console.log("Error: Something went wrong", err);
 		});
 
 		//Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
 		bgLocationServices.start();
-	}
-
-	function endSession() {
-		sessionID = null;
-		stopGPSPolling();
-		window.plugins.toast.showShortBottom("Sending an arrival text and stopping location sharing");
-		$cordovaSms
-			.send("9402935341", "Your driver is arriving soon!", smsOptions)
-			.then(function() {
-			}, function(error) {
-			});
 	}
 
 	//distance between two coordinates in miles
