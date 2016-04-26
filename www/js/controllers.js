@@ -193,7 +193,7 @@ angular.module('app.controllers', [])
 		}
 
 		$cordovaSms
-			.send("9402935341", localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=" + sessionID), smsOptions)
+			.send(phoneInput.value, localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=" + sessionID), smsOptions)
 			.then(function() {
 				window.plugins.toast.showShortBottom('Text message sent!')
 				startGPS();
