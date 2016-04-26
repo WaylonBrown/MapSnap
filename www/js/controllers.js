@@ -94,30 +94,35 @@ angular.module('app.controllers', [])
 			//get address coordinates
 			var xmlHttp = new XMLHttpRequest();
 		    xmlHttp.onreadystatechange = function() { 
-		        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-		        	console.log("Address results returned");
-		        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
-		            	window.plugins.toast.showShortBottom("Address not found");
-		            	setStateReadyForDrive();
-		            } else {
-		            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
-		            	//destination coordinates found
-			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
-			            	console.log("Getting new device position");
-			            	navigator.geolocation.getCurrentPosition(function(location) {
-			            		console.log("New device position recieved");
-			            		deviceLatitude = location.coords.latitude;
-			            		deviceLongitude = location.coords.longitude;
-			            		seeIfDestinationNearby()
-			            	}, function(error) { 
-			            		setStateReadyForDrive();
-			            		window.plugins.toast.showShortBottom("Couldn't get current location");
-			            	}, {timeout: 10000});
-			            } else {	//destination coordinates not found
+		        if (xmlHttp.readyState == 4) {
+		        	if (xmlHttp.status == 200) {
+		        		console.log("Address results returned");
+			        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
+			            	window.plugins.toast.showShortBottom("Address not found");
 			            	setStateReadyForDrive();
-		            		window.plugins.toast.showLongBottom("Couldn't find destination location");
+			            } else {
+			            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
+			            	//destination coordinates found
+				            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
+				            	console.log("Getting new device position");
+				            	navigator.geolocation.getCurrentPosition(function(location) {
+				            		console.log("New device position recieved");
+				            		deviceLatitude = location.coords.latitude;
+				            		deviceLongitude = location.coords.longitude;
+				            		seeIfDestinationNearby()
+				            	}, function(error) { 
+				            		setStateReadyForDrive();
+				            		window.plugins.toast.showShortBottom("Couldn't get current location");
+				            	}, {timeout: 10000});
+				            } else {	//destination coordinates not found
+				            	setStateReadyForDrive();
+			            		window.plugins.toast.showLongBottom("Couldn't find destination location");
+				            }
 			            }
-		            }
+		        	} else {
+		        		window.plugins.toast.showShortBottom("Couldn't load address results");
+		        		setStateReadyForDrive();
+		        	}
 		        } 
 		    }
 		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
