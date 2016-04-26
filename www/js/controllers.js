@@ -24,6 +24,7 @@ angular.module('app.controllers', [])
 	var sessionID;
 	var firebaseDB;
 	var sentSecondSMS = false;
+	var lastTimeDeviceLocation;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -66,6 +67,7 @@ angular.module('app.controllers', [])
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		  	deviceLatitude = position.coords.latitude;
 		  	deviceLongitude = position.coords.longitude;
+		  	lastTimeDeviceLocation = new Date().getTime();
 		    var geolocation = {
 		      lat: position.coords.latitude,
 		      lng: position.coords.longitude
@@ -154,16 +156,22 @@ angular.module('app.controllers', [])
 			            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
 			            	//destination coordinates found
 				            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
-				            	console.log("Getting new device position");
-				            	navigator.geolocation.getCurrentPosition(function(location) {
-				            		console.log("New device position recieved");
-				            		deviceLatitude = location.coords.latitude;
-				            		deviceLongitude = location.coords.longitude;
-				            		seeIfDestinationNearby()
-				            	}, function(error) { 
-				            		setStateReadyForDrive();
-				            		window.plugins.toast.showShortBottom("Couldn't get current location");
-				            	}, {timeout: 10000});
+				            	if (needsUpdatedLocation()) {
+				            		console.log("Getting new device position");
+					            	navigator.geolocation.getCurrentPosition(function(location) {
+					            		console.log("New device position recieved");
+					            		lastTimeDeviceLocation = new Date().getTime();
+					            		deviceLatitude = location.coords.latitude;
+					            		deviceLongitude = location.coords.longitude;
+					            		seeIfDestinationNearby()
+					            	}, function(error) { 
+					            		setStateReadyForDrive();
+					            		window.plugins.toast.showShortBottom("Couldn't get current location");
+					            	}, {timeout: 10000});
+				            	} else {
+				            		console.log("Using previous device position")
+				            		seeIfDestinationNearby();
+				            	}
 				            } else {	//destination coordinates not found
 				            	setStateReadyForDrive();
 			            		window.plugins.toast.showLongBottom("Couldn't find destination location");
@@ -178,6 +186,15 @@ angular.module('app.controllers', [])
 		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
 		    xmlHttp.send(null);
 		}
+    }
+
+    function needsUpdatedLocation() {
+    	var now = new Date().getTime();
+    	var secondsPast = (now - lastTimeDeviceLocation) / 1000;
+    	if (secondsPast >= 60) {
+    		return true;
+    	}
+    	return false;
     }
 
     function seeIfDestinationNearby() {
@@ -311,6 +328,9 @@ angular.module('app.controllers', [])
 			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 			checkDistanceThreshold();
 			//window.plugins.toast.showShortBottom('Location updated in foreground');
+			deviceLatitude = position.coords.latitude;
+			deviceLongitude = position.coords.longitude;
+			lastTimeDeviceLocation = new Date().getTime();
 		}
 
 		//////////
@@ -338,6 +358,9 @@ angular.module('app.controllers', [])
 		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 		     checkDistanceThreshold();
+		     deviceLatitude = location.latitude;
+		     deviceLongitude = location.longitude;
+		     lastTimeDeviceLocation = new Date().getTime();
 		}, function(err) {
 		     console.log("Error: Didnt get an update", err);
 		});
