@@ -49,7 +49,9 @@ angular.module('app.controllers', [])
 	  };
 
   	//get phone number
-	window.plugins.sim.requestReadPermission();
+  	if (device.platform == "Android") {
+		window.plugins.sim.requestReadPermission();
+	}
 	window.plugins.sim.getSimInfo(function(jsonObject) {
 		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
 		driverPhoneNumber = jsonObject.phoneNumber;
@@ -81,12 +83,13 @@ angular.module('app.controllers', [])
 
 	var button1DefaultClickListener = function() {
 		console.log("Send text button clicked");
+		window.plugins.toast.showShortBottom("toast test");
 		setStateVerifyingData();
 		checkCompanyCode();
 	};
 	var button1NavigateClickListener = function() {
 		window.plugins.toast.showShortBottom('Opening maps...');
-		if (device.platform = "Android") {
+		if (device.platform == "Android") {
 			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
 		} else if (device.platform = "iOS") {
 			window.open('maps://?q=daddr='+destination);
