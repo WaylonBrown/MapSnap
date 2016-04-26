@@ -384,7 +384,12 @@ angular.module('app.controllers', [])
 .controller('settingsCtrl', function($scope) {
 	var messageElement = document.getElementById("message")
 	var codeElement = document.getElementById("compcode")
-	var checkboxElement = document.getElementById("checkbox").getElementsByTagName('input')[0]
+	var checkboxElement = document.getElementById("checkbox").getElementsByTagName('input')[0];
+	var warningText = document.getElementById("warningText");
+	var prevMessageInput;
+	var SMS_CHAR_LIMIT = 160;
+	var LINK_LENGTH = 46;
+	var LINK_EMBED_LENGTH = 6; //length of "[link]"
 
 	if(localStorage != undefined)
 	{
@@ -392,7 +397,13 @@ angular.module('app.controllers', [])
 
 		//input listeners
 		messageElement.addEventListener('input', function() {
-			localStorage.setItem("message", messageElement.value)
+			var max_chars = SMS_CHAR_LIMIT - LINK_LENGTH + LINK_EMBED_LENGTH;
+		    if(messageElement.value.length > max_chars) {
+		        messageElement.value = prevMessageInput;
+		    }
+		    prevMessageInput = messageElement.value;
+			localStorage.setItem("message", messageElement.value);
+			checkToShowWarningText();
 		});
 		codeElement.addEventListener('input', function() {
 			localStorage.setItem("compcode", codeElement.value)
@@ -404,10 +415,21 @@ angular.module('app.controllers', [])
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
 		checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
+
+		prevMessageInput = messageElement.value;
+		checkToShowWarningText();
 	}
 	else
 	{
 	  console.log("No local storage support");
+	}
+
+	function checkToShowWarningText() {
+		if (messageElement.value.indexOf("[link]") > -1) {
+			warningText.style.display = "none";
+		} else {
+			warningText.style.display = "block";
+		}
 	}
 })
     

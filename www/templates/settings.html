@@ -1,5 +1,5 @@
 <ion-view title="Settings" id="page3">
-    <ion-content padding="true" scroll="false" class="has-header">
+    <ion-content padding="true" scroll="true" class="has-header">
         <div id="settings-markdown3" style="color:#000000;">
             <p><b>Company code</b></p>
             <p><small>Case sensitive!</small></p>
@@ -12,6 +12,7 @@
         <div id="settings-markdown4" style="color:#000000;">
             <p><b>Message to customer</b></p>
             <p><small>Use [link] in the message where you want the link to the drive to show.</small></p>
+            <p id="warningText" style="color: #FF0000"><small>Warning: This text doesn't contain [link], so the user won't see your map.</small></p>
         </div>
         <form class="list">
             <label class="item item-input" name="message">
