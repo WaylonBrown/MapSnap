@@ -37,17 +37,6 @@ angular.module('app.controllers', [])
 		localStorage.setItem("compcode", "")
 	}
 
-	//hack to get clicking on autocomplete working
-	$scope.disableTap = function(){
-	    container = document.getElementsByClassName('pac-container');
-	    // disable ionic data tab
-	    angular.element(container).attr('data-tap-disabled', 'true');
-	    // leave input field if google-address-entry is selected
-	    angular.element(container).on("click", function(){
-	        addressInput.blur();
-	    });
-	  };
-
   	//get phone number
   	if (device.platform == "Android") {
 		window.plugins.sim.requestReadPermission();
@@ -82,8 +71,6 @@ angular.module('app.controllers', [])
 
 
 	var button1DefaultClickListener = function() {
-		console.log("Send text button clicked");
-		window.plugins.toast.showShortBottom("toast test");
 		setStateVerifyingData();
 		checkCompanyCode();
 	};
@@ -191,7 +178,7 @@ angular.module('app.controllers', [])
     function needsUpdatedLocation() {
     	var now = new Date().getTime();
     	var secondsPast = (now - lastTimeDeviceLocation) / 1000;
-    	if (secondsPast >= 60) {
+    	if (secondsPast >= 1) {
     		return true;
     	}
     	return false;
@@ -391,7 +378,7 @@ angular.module('app.controllers', [])
 		dist = Math.acos(dist)
 		dist = dist * 180/Math.PI
 		dist = dist * 60 * 1.1515
-		//window.plugins.toast.showShortBottom("From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
+		console.log("Distance: From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
 		return dist
 	}
 
@@ -424,7 +411,29 @@ angular.module('app.controllers', [])
 		} else {
 			clearText2.style.display = "none";
 		}
+		var g_autocomplete = $("body > .pac-container").filter(":visible");
+        g_autocomplete.bind('DOMNodeInserted DOMNodeRemoved', function(event) {
+            $(".pac-item", this).addClass("needsclick");
+        });
 	});
+
+	addressInput.onfocus = function() {
+		//hack to get clicking on autocomplete working
+		$scope.disableTap = function(){
+		    container = document.getElementsByClassName('pac-container');
+		    // disable ionic data tab
+		    angular.element(container).attr('data-tap-disabled', 'true');
+		    // leave input field if google-address-entry is selected
+		    angular.element(container).on("click", function(){
+		        addressInput.blur();
+		    });
+		  };
+
+		  var $addressInput = $(addressInput);
+                if (addressInput.nodeName.toLowerCase() === 'input' && addressInput.type === 'file') return false;
+                if ($addressInput.hasClass('no-fastclick') || $addressInput.parents('.no-fastclick').length > 0) return false;
+                return true;
+	}
 
 
 	//setup autocomplete
