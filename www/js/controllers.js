@@ -1,5 +1,4 @@
-var defaultMessage = "Your driver is on their way! View their drive here: [link]"
-var isGPSPolling = false
+var defaultMessage = "Your driver is on their way! View their drive here: [link]";
 var DISTANCE_THRESSHOLD = 0.22; //in miles, distance where it'll end the session
 
 angular.module('app.controllers', [])
@@ -70,25 +69,23 @@ angular.module('app.controllers', [])
 		      radius: position.coords.accuracy
 		    });
 		    autocomplete.setBounds(circle.getBounds());
-		  }, function() {
-		  	window.plugins.toast.showShortBottom("Couldn't get device's location");
-		  });
+		  }, function(error) {}, {timeout: 5000});
 		}
 	}
 
 
 	var button1DefaultClickListener = function() {
 		console.log("Send text button clicked");
-		button1.innerText = "Sending text...";
+		setStateGettingLocation();
 		if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
 			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
-			button1.innerText = "Start Drive";
+			setStateReadyForDrive();
 		} else if (phoneInput.value == "" || isNaN(phoneInput.value)) {
 			window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
-			button1.innerText = "Start Drive";
+			setStateReadyForDrive();
 		} else if (addressInput.value == "") {
 			window.plugins.toast.showShortBottom('Enter a valid address')
-			button1.innerText = "Start Drive";
+			setStateReadyForDrive();
 		} else {
 			sessionID = Math.round(Math.random() * 10000000);
 			var firebaseURL = "https://boiling-fire-1004.firebaseio.com/mapID/" + sessionID;
@@ -101,29 +98,23 @@ angular.module('app.controllers', [])
 		        	console.log("Address results returned");
 		        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
 		            	window.plugins.toast.showShortBottom("Address not found");
-		            	button1.innerText = "Start Drive";
+		            	setStateReadyForDrive();
 		            } else {
 		            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
 		            	//destination coordinates found
 			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
-			            	//initial device location found
-			            	if (deviceLatitude != undefined && deviceLongitude != undefined) {
-			            		console.log("Initial device location found");
-			            		seeIfDestinationNearby();
-			            	} else {	//initial device location not found
-			            		console.log("Getting new device position");
-				            	navigator.geolocation.getCurrentPosition(function(location) {
-				            		console.log("New device position recieved");
-				            		deviceLatitude = location.coords.latitude;
-				            		deviceLongitude = location.coords.longitude;
-				            		seeIfDestinationNearby()
-				            	}, function() { 
-				            		button1.innerText = "Start Drive";
-				            		window.plugins.toast.showShortBottom("Couldn't get current location");
-				            	});
-			            	}
+			            	console.log("Getting new device position");
+			            	navigator.geolocation.getCurrentPosition(function(location) {
+			            		console.log("New device position recieved");
+			            		deviceLatitude = location.coords.latitude;
+			            		deviceLongitude = location.coords.longitude;
+			            		seeIfDestinationNearby()
+			            	}, function(error) { 
+			            		setStateReadyForDrive();
+			            		window.plugins.toast.showShortBottom("Couldn't get current location");
+			            	}, {timeout: 10000});
 			            } else {	//destination coordinates not found
-			            	button1.innerText = "Start Drive";
+			            	setStateReadyForDrive();
 		            		window.plugins.toast.showLongBottom("Couldn't find destination location");
 			            }
 		            }
@@ -169,7 +160,7 @@ angular.module('app.controllers', [])
         	}
         	sendText(savedAddressInput);
 		} else {	//destination is too far away
-			button1.innerText = "Start Drive";
+			setStateReadyForDrive();
 			window.plugins.toast.showLongBottom("Destination is over 100 miles away, if the location is closer be sure to add the city and state to get the correct location.");
 		}
     }
@@ -177,16 +168,12 @@ angular.module('app.controllers', [])
 	function stopGPSPolling() {
 		clearInterval(activeForegroundWatcher);
 		bgLocationServices.stop();
-		isGPSPolling = false;
-		button1.innerText = "Start Drive";
-		button1.className = "button button-positive button-block";
-		button1.removeEventListener('click', button1NavigateClickListener);
-		button1.addEventListener('click', button1DefaultClickListener);
-		button2.style.display="none";
+		setStateReadyForDrive();
 	}
 
 	//jsonLocation.lat and jsonLocation.lng
 	function sendText(addressString) {
+		setStateSendingText();
 		console.log("Sending SMS...");
 		if (localStorage.getItem("message") == "undefined") {
 			localStorage.setItem("message", defaultMessage)
@@ -195,20 +182,44 @@ angular.module('app.controllers', [])
 		$cordovaSms
 			.send(phoneInput.value, localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=" + sessionID), smsOptions)
 			.then(function() {
-				window.plugins.toast.showShortBottom('Text message sent!')
+				window.plugins.toast.showShortBottom('Text message sent!');
 				startGPS();
 			}, function(error) {
-				window.plugins.toast.showShortBottom('Error sending text message')
+				window.plugins.toast.showShortBottom('Error sending text message');
+				setStateReadyForDrive();
 			});
 	}
 
-	function startGPS() {
-		isGPSPolling = true;
+	function setStateReadyForDrive() {
+		button1.innerText = "Start Drive";
+		button1.className = "button button-positive button-block";
+		button1.removeEventListener('click', button1NavigateClickListener);
+		button1.addEventListener('click', button1DefaultClickListener);
+		button2.style.display="none";
+	}
+
+	function setStateGettingLocation() {
+		button1.innerText = "Getting location...";
+		button1.removeEventListener('click', button1NavigateClickListener);
+		button1.removeEventListener('click', button1DefaultClickListener);
+	}
+
+	function setStateSendingText() {
+		button1.innerText = "Sending text...";
+		button1.removeEventListener('click', button1NavigateClickListener);
+		button1.removeEventListener('click', button1DefaultClickListener);
+	}
+
+	function setStateDriveActive() {
 		button1.innerText = "Navigate";
 		button1.className = "button button-calm button-block";
 		button2.style.display="block"
 		button1.removeEventListener('click', button1DefaultClickListener);
 		button1.addEventListener('click', button1NavigateClickListener);
+	}
+
+	function startGPS() {
+		setStateDriveActive();
 
 		//////////
 		//FOREGROUND GPS
@@ -228,7 +239,8 @@ angular.module('app.controllers', [])
 		function watchLocation() {
 		    var gcp = navigator.geolocation.getCurrentPosition(
 	            updateUserLocation, onLocationError, {
-	                enableHighAccuracy: true
+	                enableHighAccuracy: true,
+	                timeout: 10000
 	            });
 
 		}
