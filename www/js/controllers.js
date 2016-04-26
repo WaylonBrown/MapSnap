@@ -24,7 +24,7 @@ angular.module('app.controllers', [])
 		localStorage.setItem("message", defaultMessage)
 	}
 	if (localStorage.getItem("checkbox") == undefined) {
-		localStorage.setItem("checkbox", false)
+		localStorage.setItem("checkbox", true)
 	}
 	if (localStorage.getItem("compcode") == undefined) {
 		localStorage.setItem("compcode", "")
@@ -76,21 +76,61 @@ angular.module('app.controllers', [])
 
 	var button1DefaultClickListener = function() {
 		console.log("Send text button clicked");
-		setStateGettingLocation();
-		if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
+		setStateVerifyingData();
+		checkCompanyCode();
+	};
+	var button1NavigateClickListener = function() {
+		window.plugins.toast.showShortBottom('Opening maps...');
+		if (device.platform = "Android") {
+			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
+		} else if (device.platform = "iOS") {
+			window.open('maps://?q=daddr='+destination);
+		}
+	};
+	//stop drive
+	var button2ClickListener = function() {
+		stopGPSPolling();
+	};
+	var smsOptions = {
+        replaceLineBreaks: false, // true to replace \n by a new line, false by default
+        android: {
+            // intent: 'INTENT'  // send SMS with the native android SMS messaging
+            intent: '' // send SMS without open any other app
+        }
+    };
+
+    function checkCompanyCode() {
+    	if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
 			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
 			setStateReadyForDrive();
-		} else if (phoneInput.value == "" || isNaN(phoneInput.value)) {
+		} else {
+			var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode"));
+			companyCodeDB.once("value", function(snapshot) {
+  				var companyExists = snapshot.exists();
+  				if (companyExists) {
+  					setStateGettingLocation();
+  					checkValuesForDrive(companyCodeDB);
+  				} else {
+  					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly. It is case sensitive.")
+					setStateReadyForDrive();
+  				}
+  			});
+		}
+	}
+
+	function checkValuesForDrive(companyDB) {
+    	if (phoneInput.value == "" || isNaN(phoneInput.value)) {
 			window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
 			setStateReadyForDrive();
 		} else if (addressInput.value == "") {
 			window.plugins.toast.showShortBottom('Enter a valid address')
 			setStateReadyForDrive();
 		} else {
-			sessionID = Math.round(Math.random() * 10000000);
+			sessionID = Math.round(Math.random() * 1000000000);
 			var firebaseURL = "https://boiling-fire-1004.firebaseio.com/mapID/" + sessionID;
 			console.log("Generated session ID, firebase URL: " + firebaseURL);
 			firebaseDB = new Firebase(firebaseURL);
+
 			//get address coordinates
 			var xmlHttp = new XMLHttpRequest();
 		    xmlHttp.onreadystatechange = function() { 
@@ -128,26 +168,7 @@ angular.module('app.controllers', [])
 		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
 		    xmlHttp.send(null);
 		}
-	};
-	var button1NavigateClickListener = function() {
-		window.plugins.toast.showShortBottom('Opening maps...');
-		if (device.platform = "Android") {
-			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
-		} else if (device.platform = "iOS") {
-			window.open('maps://?q=daddr='+destination);
-		}
-	};
-	//stop drive
-	var button2ClickListener = function() {
-		stopGPSPolling();
-	};
-	var smsOptions = {
-        replaceLineBreaks: false, // true to replace \n by a new line, false by default
-        android: {
-            // intent: 'INTENT'  // send SMS with the native android SMS messaging
-            intent: '' // send SMS without open any other app
-        }
-    };
+    }
 
     function seeIfDestinationNearby() {
     	//destination is nearby
@@ -201,6 +222,12 @@ angular.module('app.controllers', [])
 		button1.removeEventListener('click', button1NavigateClickListener);
 		button1.addEventListener('click', button1DefaultClickListener);
 		button2.style.display="none";
+	}
+
+	function setStateVerifyingData() {
+		button1.innerText = "Verifying data...";
+		button1.removeEventListener('click', button1NavigateClickListener);
+		button1.removeEventListener('click', button1DefaultClickListener);
 	}
 
 	function setStateGettingLocation() {
@@ -271,7 +298,7 @@ angular.module('app.controllers', [])
 		     debug: true, // <-- Enable to show visual indications when you receive a background location update
 		     interval: 10000, // (Milliseconds) Requested Interval in between location updates.
 		     //Android Only
-		     notificationTitle: 'Where They At', // customize the title of the notification
+		     notificationTitle: 'MapSnap', // customize the title of the notification
 		     notificationText: 'Sharing location, tap to open', //customize the text of the notification
 		     fastestInterval: 7000, // <-- (Milliseconds) Fastest interval your app / server can handle updates
 		     useActivityDetection: true // Uses Activitiy detection to shut off gps when you are still (Greatly enhances Battery Life)
