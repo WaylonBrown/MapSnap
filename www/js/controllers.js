@@ -17,7 +17,8 @@ angular.module('app.controllers', [])
 	var phoneNumber;
 	var deviceLatitude;
 	var deviceLongitude;
-	var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID/12345');
+	var sessionID;
+	var firebaseDB;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -77,6 +78,7 @@ angular.module('app.controllers', [])
 
 
 	var button1DefaultClickListener = function() {
+		console.log("Send text button clicked");
 		button1.innerText = "Sending text...";
 		if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
 			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
@@ -88,10 +90,15 @@ angular.module('app.controllers', [])
 			window.plugins.toast.showShortBottom('Enter a valid address')
 			button1.innerText = "Start Drive";
 		} else {
+			sessionID = Math.round(Math.random() * 10000000);
+			var firebaseURL = "https://boiling-fire-1004.firebaseio.com/mapID/" + sessionID;
+			console.log("Generated session ID, firebase URL: " + firebaseURL);
+			firebaseDB = new Firebase(firebaseURL);
 			//get address coordinates
 			var xmlHttp = new XMLHttpRequest();
 		    xmlHttp.onreadystatechange = function() { 
 		        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+		        	console.log("Address results returned");
 		        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
 		            	window.plugins.toast.showShortBottom("Address not found");
 		            	button1.innerText = "Start Drive";
@@ -101,9 +108,12 @@ angular.module('app.controllers', [])
 			            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
 			            	//initial device location found
 			            	if (deviceLatitude != undefined && deviceLongitude != undefined) {
+			            		console.log("Initial device location found");
 			            		seeIfDestinationNearby();
 			            	} else {	//initial device location not found
+			            		console.log("Getting new device position");
 				            	navigator.geolocation.getCurrentPosition(function(location) {
+				            		console.log("New device position recieved");
 				            		deviceLatitude = location.coords.latitude;
 				            		deviceLongitude = location.coords.longitude;
 				            		seeIfDestinationNearby()
@@ -117,7 +127,7 @@ angular.module('app.controllers', [])
 		            		window.plugins.toast.showLongBottom("Couldn't find destination location");
 			            }
 		            }
-		        }
+		        } 
 		    }
 		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
 		    xmlHttp.send(null);
@@ -146,10 +156,13 @@ angular.module('app.controllers', [])
     function seeIfDestinationNearby() {
     	//destination is nearby
 		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, deviceLatitude, deviceLongitude) < 100) {
+			console.log("Destination is nearby");
 			savedAddressInput = addressInput.value
         	firebaseDB.update({destinationAddress: savedAddressInput, 
         		destinationLatitude: destinationCoordinates.lat, 
         		destinationLongitude: destinationCoordinates.lng,
+        		currentLatitude: deviceLatitude,
+        		currentLongitude: deviceLongitude,
         		timeStamp: Date.now()});
         	if (phoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
         		firebaseDB.update({phoneNumber: phoneNumber});
@@ -174,12 +187,13 @@ angular.module('app.controllers', [])
 
 	//jsonLocation.lat and jsonLocation.lng
 	function sendText(addressString) {
+		console.log("Sending SMS...");
 		if (localStorage.getItem("message") == "undefined") {
 			localStorage.setItem("message", defaultMessage)
 		}
 
 		$cordovaSms
-			.send("9402935341", localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=12345"), smsOptions)
+			.send("9402935341", localStorage.getItem("message").replace("[link]", "http://mapsnap.ezizu.com/map.html?id=" + sessionID), smsOptions)
 			.then(function() {
 				window.plugins.toast.showShortBottom('Text message sent!')
 				startGPS();
@@ -278,6 +292,7 @@ angular.module('app.controllers', [])
 	}
 
 	function endSession() {
+		sessionID = null;
 		stopGPSPolling();
 		window.plugins.toast.showShortBottom("Sending an arrival text and stopping location sharing");
 		$cordovaSms
