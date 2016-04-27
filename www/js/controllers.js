@@ -182,7 +182,7 @@ angular.module('app.controllers', [])
     	var now = new Date().getTime();
     	var secondsPast = (now - lastTimeDeviceLocation) / 1000;
     	console.log("Seconds past: " + secondsPast + ", now: " + now + ", lastTimeDeviceLocation: " + lastTimeDeviceLocation);
-    	if (secondsPast >= 1) {
+    	if (secondsPast >= 60) {
     		return true;
     	}
     	return false;
