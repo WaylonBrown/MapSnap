@@ -422,16 +422,7 @@ angular.module('app.controllers', [])
 	});
 
 	addressInput.onfocus = function() {
-		//hack to get clicking on autocomplete working
-		$scope.disableTap = function(){
-		    container = document.getElementsByClassName('pac-container');
-		    // disable ionic data tab
-		    angular.element(container).attr('data-tap-disabled', 'true');
-		    // leave input field if google-address-entry is selected
-		    angular.element(container).on("click", function(){
-		        addressInput.blur();
-		    });
-		  };
+		autoCompleteHack();
 	}
 
 
@@ -439,6 +430,20 @@ angular.module('app.controllers', [])
 	var autocomplete = new google.maps.places.Autocomplete(addressInput,
       {types: ['geocode']});
 	geolocate();
+	autoCompleteHack();
+
+	//hack to get clicking on autocomplete working
+	function autoCompleteHack() {
+		$scope.disableTap = function(){
+		    container = document.getElementsByClassName('pac-container');
+		    // disable ionic data tab
+		    angular.element(container).attr('data-tap-disabled', 'true');
+		    // leave input field if google-address-entry is selected
+		    angular.element(container).on("click", function(){
+		        addressInput.blur();
+	    });
+	  }
+	}
 })
    
 .controller('settingsCtrl', function($scope) {
