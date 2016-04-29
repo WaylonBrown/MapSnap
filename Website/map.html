@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.firebase.com https://boiling-fire-1004.firebaseio.com https://maps.googleapis.com https://*.firebaseio.com https://fonts.googleapis.com"/>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,500,100,100italic' rel='stylesheet' type='text/css'>
+    
+    <title>MapSnap</title>
+
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+
+    <style type="text/css">
+      html, body {
+        width:100%;
+        height:100%;
+        position:relative;
+        margin:0;
+      }
+      a:link {
+        text-decoration: none;
+      }
+      #map {
+        width: 100%;
+        height: 100%;
+        bottom: 98px;
+      }
+      .button {
+        display:none;
+        position: fixed;
+        top:0;
+        width: 100%;
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        font-family: 'Roboto';
+        font-weight: 300;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 0 15px #00214B;
+      }
+      #spaceFooter {
+        position: fixed;
+        bottom: 92px;
+        width: 100%;
+        height: 6px;
+        background: #FFFFFF;
+        box-shadow: 0 0 15px #00214B;
+      }
+      #arrivalFooter {
+        position: fixed;
+        bottom: 60px;
+        width: 100%;
+        height: 32px;
+        background: #FFFFFF;
+        text-align: center;
+        color: #042E64;
+        font-size: 26px;
+        font-family: 'Roboto';
+        font-weight: 500;
+        margin-left:auto;
+        margin-right:auto;
+      }
+      #distanceFooter {
+        position: fixed;
+        bottom: 30px;
+        width: 100%;
+        height:30px;
+        background: #FFFFFF;
+        text-align: center;
+        color: #042E64;
+        font-size: 20px;
+        font-family: 'Roboto';
+        font-weight: 300;
+        margin-left:auto;
+        margin-right:auto;
+      }
+      #linkFooter {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height:30px;
+        background: #FFFFFF;
+        text-align: center;
+        color: #042E64;
+        font-size: 16px;
+        font-family: 'Roboto';
+        font-weight: 100;
+        margin-left:auto;
+        margin-right:auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <button id="callDriverButton" class="button" onClick="callDriverClicked()">Call Driver</button>
+    <div id="spaceFooter"></div>
+    <div id="arrivalFooter">Loading arrival time...</div>
+    <div id="distanceFooter"><i>Loading distance...</i></div>
+    <div id="linkFooter"><a href="http://www.mapsnap.io">MapSnap.io</a></div>
+    <script>
+      var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID');
+      var currentLatitude;
+      var currentLongitude;
+      var destinationLatitude;
+      var destinationLongitude;
+      var phoneNumber;
+      var companyName;
+      var map;
+      var initialCoordsLoaded = false;
+      var infoInitiallyOpened = false;
+      var markers = [];
+      var directionsDisplay;
+
+      function loadData() {
+        //http://mapsnap.ezizu.com/map.html?id=12345
+        var mapID = getUrlParameter("id");
+        console.log("Map id is " + mapID);
+        var dataObject = firebaseDB.child(mapID).on("value", function(snapshot) {
+          currentLatitude = snapshot.val().currentLatitude;
+          currentLongitude = snapshot.val().currentLongitude;
+          destinationLatitude = snapshot.val().destinationLatitude;
+          destinationLongitude = snapshot.val().destinationLongitude;
+          phoneNumber = snapshot.val().driverPhoneNumber;
+          companyName = snapshot.val().companyName;
+          //remove Call Driver button
+          var callDriverButton = document.getElementById("callDriverButton");
+          if (phoneNumber == undefined || phoneNumber == "") {
+            callDriverButton.style.display = "none";
+          } else {
+            callDriverButton.style.display = "inline-block";
+          }
+
+          if (!initialCoordsLoaded) {
+            initialCoordsLoaded = true;
+            initMap();
+          }
+          updateMap();
+        });
+      }
+
+      //set initial bounds/zoom/centering, when map is updated the markers move but the zoom doesn't
+      function initMap() {
+        console.log('initMap');
+        var mapDiv = document.getElementById('map');
+
+        //setup map
+        var startLatLng;
+        if (currentLatitude != undefined && currentLongitude != undefined) {
+          startLatLng = new google.maps.LatLng(currentLatitude, currentLongitude); 
+        } else {
+          startLatLng = new google.maps.LatLng(41.8781, 87.6298);
+        }
+        map = new google.maps.Map(mapDiv, {
+          center: startLatLng,
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          zoomControl: false,
+          mapTypeControl: false,
+          scaleControl: false,
+          streetViewControl: false,
+          rotateControl: false,
+          fullscreenControl: false
+        });
+
+        //set bounds
+        var bounds = new google.maps.LatLngBounds(null);
+        var latLng1;
+        var latLng2;
+        if (currentLatitude != undefined && currentLongitude != undefined) {
+          latLng1 = new google.maps.LatLng(currentLatitude, currentLongitude);
+        }
+        if (destinationLatitude != undefined && destinationLongitude != undefined) {
+          latLng2 = new google.maps.LatLng(destinationLatitude, destinationLongitude);
+        }
+
+        if (latLng1 != undefined) {
+          bounds.extend(latLng1);
+        }
+        if (latLng2 != undefined) {
+          bounds.extend(latLng2);
+        }
+        map.fitBounds(bounds);
+      }
+
+      function updateMap() {
+        console.log('updateMap');
+
+        //clear old markers
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }
+        markers = [];
+
+        //add new markers
+        if (currentLatitude != undefined && currentLongitude != undefined) {
+          var image = new google.maps.MarkerImage(
+              'images/car_icon.png',
+              null, /* size is determined at runtime */
+              null, /* origin is 0,0 */
+              null, /* anchor is bottom center of the scaled image */
+              new google.maps.Size(56, 56)
+          );
+          var infoWindowString;
+          if (companyName != undefined && companyName != "") {
+            infoWindowString = companyName;
+          } else {
+            infoWindowString = "Driver";
+          }
+          var infowindow1 = new google.maps.InfoWindow({
+            content: infoWindowString
+          });
+          var marker1 = new google.maps.Marker({
+            map: map,
+            position: new google.maps.LatLng(currentLatitude, currentLongitude),
+            title: 'Driver',
+            icon: image
+          });
+          if (!infoInitiallyOpened && infoWindowString == companyName) {
+            infoInitiallyOpened = true;
+            infowindow1.open(map, marker1);
+          }
+          marker1.addListener('click', function() {
+            infowindow1.open(map, marker1);
+          });
+          markers.push(marker1);
+        } else {
+          var arrivalFooter = document.getElementById('arrivalFooter');
+          var distanceFooter = document.getElementById('distanceFooter');
+          arrivalFooter.innerHTML = "Waiting for driver location...";
+          distanceFooter.innerHTML = "";
+        }
+        if (destinationLatitude != undefined && destinationLongitude != undefined) {
+          var infowindow2 = new google.maps.InfoWindow({
+            content: "Destination"
+          });
+          var marker2 = new google.maps.Marker({
+            map: map,
+            position: new google.maps.LatLng(destinationLatitude, destinationLongitude),
+            title: 'Destination'
+          });
+          marker2.addListener('click', function() {
+            infowindow2.open(map, marker2);
+          });
+          markers.push(marker2);
+        } else {
+          var arrivalFooter = document.getElementById('arrivalFooter');
+          var distanceFooter = document.getElementById('distanceFooter');
+          arrivalFooter.innerHTML = "Couldn't find destination";
+          distanceFooter.innerHTML = "";
+        }
+
+        //directions
+        if (currentLatitude != undefined && currentLongitude != undefined 
+          && destinationLatitude != undefined && destinationLongitude != undefined) {
+          var latLng1 = new google.maps.LatLng(currentLatitude, currentLongitude);
+          var latLng2 = new google.maps.LatLng(destinationLatitude, destinationLongitude);
+
+          //clear old directions
+          if (directionsDisplay != undefined) {
+            directionsDisplay.setMap(null);
+          }
+
+          directionsDisplay = new google.maps.DirectionsRenderer({
+            map: map,
+            preserveViewport: true,
+            suppressMarkers: true
+          });
+
+          // Set destination, origin and travel mode.
+          var request = {
+            destination: latLng2,
+            origin: latLng1,
+            travelMode: google.maps.TravelMode.DRIVING
+          };
+
+          // Pass the directions request to the directions service.
+          var directionsService = new google.maps.DirectionsService();
+          directionsService.route(request, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              // Display the route on the map.
+              directionsDisplay.setDirections(response);
+              var point = response.routes[ 0 ].legs[ 0 ];
+              console.log('Estimated travel time: ' + point.duration.text + ' (' + point.distance.text + ')' );
+              var arrivalFooter = document.getElementById('arrivalFooter');
+              var distanceFooter = document.getElementById('distanceFooter');
+              arrivalFooter.innerHTML = "Arriving in: " + point.duration.text;
+              distanceFooter.innerHTML = "<i>" + point.distance.text + " away </i>";
+            }
+          });
+        } 
+      }
+
+      function callDriverClicked() {
+        console.log("Calling number...");
+        window.location = "tel:" + phoneNumber;
+      }
+
+      function getUrlParameter(name) {
+        if (!window.location.href ) window.location.href = location.href;
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( window.location.href );
+        return results == null ? null : results[1];
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=loadData"
+        async defer></script>
+  </body>
+</html>
