@@ -106,8 +106,14 @@ angular.module('app.controllers', [])
   					setStateGettingLocation();
   					var dataObject = companyCodeDB.on("value", function(snapshot) {
           				companyName = snapshot.val().name;
+          				console.log("Company exists with name " + companyName);
+          				if (companyName != undefined) {
+							checkValuesForDrive();
+          				} else {
+          					window.plugins.toast.showShortBottom("Company name not defined, please contact MapSnap")
+							setStateReadyForDrive();
+          				}
           			});
-  					checkValuesForDrive();
   				} else {
   					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly. It is case sensitive.")
 					setStateReadyForDrive();
