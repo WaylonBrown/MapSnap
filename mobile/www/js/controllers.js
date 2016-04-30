@@ -463,7 +463,7 @@ angular.module('app.controllers', [])
 	var warningText = document.getElementById("warningText");
 	var prevMessageInput;
 	var SMS_CHAR_LIMIT = 160;
-	var LINK_LENGTH = 46;
+	var LINK_LENGTH = 40;
 	var LINK_EMBED_LENGTH = 6; //length of "[link]"
 
 	if(localStorage != undefined)
