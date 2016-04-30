@@ -102,7 +102,7 @@
     <div id="spaceFooter"></div>
     <div id="arrivalFooter">Loading arrival time...</div>
     <div id="distanceFooter"><i>Loading distance...</i></div>
-    <div id="linkFooter"><a href="http://www.mapsnap.io">MapSnap.io</a></div>
+    <div id="linkFooter">Powered by <a href="http://www.mapsnap.net">MapSnap.net</a></div>
     <script>
       var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID');
       var currentLatitude;
@@ -118,30 +118,35 @@
       var directionsDisplay;
 
       function loadData() {
-        //http://mapsnap.ezizu.com/map.html?id=12345
+        //http://mapsnap.net/map.html?id=12345
         var mapID = getUrlParameter("id");
-        console.log("Map id is " + mapID);
-        var dataObject = firebaseDB.child(mapID).on("value", function(snapshot) {
-          currentLatitude = snapshot.val().currentLatitude;
-          currentLongitude = snapshot.val().currentLongitude;
-          destinationLatitude = snapshot.val().destinationLatitude;
-          destinationLongitude = snapshot.val().destinationLongitude;
-          phoneNumber = snapshot.val().driverPhoneNumber;
-          companyName = snapshot.val().companyName;
-          //remove Call Driver button
-          var callDriverButton = document.getElementById("callDriverButton");
-          if (phoneNumber == undefined || phoneNumber == "") {
-            callDriverButton.style.display = "none";
-          } else {
-            callDriverButton.style.display = "inline-block";
-          }
+        if (mapID == undefined) {
+          errorState("Can't find your map");
+          initMap();
+        } else {
+          console.log("Map id is " + mapID);
+          var dataObject = firebaseDB.child(mapID).on("value", function(snapshot) {
+            currentLatitude = snapshot.val().currentLatitude;
+            currentLongitude = snapshot.val().currentLongitude;
+            destinationLatitude = snapshot.val().destinationLatitude;
+            destinationLongitude = snapshot.val().destinationLongitude;
+            phoneNumber = snapshot.val().driverPhoneNumber;
+            companyName = snapshot.val().companyName;
+            //remove Call Driver button
+            var callDriverButton = document.getElementById("callDriverButton");
+            if (phoneNumber == undefined || phoneNumber == "") {
+              callDriverButton.style.display = "none";
+            } else {
+              callDriverButton.style.display = "inline-block";
+            }
 
-          if (!initialCoordsLoaded) {
-            initialCoordsLoaded = true;
-            initMap();
-          }
-          updateMap();
-        });
+            if (!initialCoordsLoaded) {
+              initialCoordsLoaded = true;
+              initMap();
+            }
+            updateMap();
+          });
+        }
       }
 
       //set initial bounds/zoom/centering, when map is updated the markers move but the zoom doesn't
@@ -154,7 +159,7 @@
         if (currentLatitude != undefined && currentLongitude != undefined) {
           startLatLng = new google.maps.LatLng(currentLatitude, currentLongitude); 
         } else {
-          startLatLng = new google.maps.LatLng(41.8781, 87.6298);
+          startLatLng = new google.maps.LatLng(40.698023, -73.997261);
         }
         map = new google.maps.Map(mapDiv, {
           center: startLatLng,
@@ -185,7 +190,10 @@
         if (latLng2 != undefined) {
           bounds.extend(latLng2);
         }
-        map.fitBounds(bounds);
+
+        if (latLng1 != undefined || latLng2 != undefined) {
+          map.fitBounds(bounds);
+        }
       }
 
       function updateMap() {
@@ -251,8 +259,7 @@
         } else {
           var arrivalFooter = document.getElementById('arrivalFooter');
           var distanceFooter = document.getElementById('distanceFooter');
-          arrivalFooter.innerHTML = "Couldn't find destination";
-          distanceFooter.innerHTML = "";
+          errorState("Couldn't find destination");
         }
 
         //directions
@@ -299,6 +306,11 @@
       function callDriverClicked() {
         console.log("Calling number...");
         window.location = "tel:" + phoneNumber;
+      }
+
+      function errorState(message) {
+        arrivalFooter.innerHTML = message;
+        distanceFooter.innerHTML = "";
       }
 
       function getUrlParameter(name) {
