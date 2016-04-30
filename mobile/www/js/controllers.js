@@ -36,6 +36,12 @@ angular.module('app.controllers', [])
 	if (localStorage.getItem("compcode") == undefined) {
 		localStorage.setItem("compcode", "")
 	}
+	if (localStorage.getItem("driverPhoneNumber") == undefined) {
+		localStorage.setItem("driverPhoneNumber", "");
+	}
+	if (localStorage.getItem("phoneNumberError") == undefined) {
+		localStorage.setItem("phoneNumberError", false);
+	}
 
   	//get phone number
   	if (device.platform == "Android") {
@@ -72,7 +78,7 @@ angular.module('app.controllers', [])
 
 	var button1DefaultClickListener = function() {
 		setStateVerifyingData();
-		checkCompanyCode();
+		checkDriverPhoneNumber();
 	};
 	var button1NavigateClickListener = function() {
 		window.plugins.toast.showShortBottom('Opening maps...');
@@ -93,6 +99,26 @@ angular.module('app.controllers', [])
             intent: '' // send SMS without open any other app
         }
     };
+
+    function checkDriverPhoneNumber() {
+    	//if driver wants to share phone number
+    	if (localStorage.getItem("checkbox") == 'true') {
+    		//if we have their phone number
+    		if ((driverPhoneNumber != undefined && driverPhoneNumber != "") || 
+					(localStorage.getItem("driverPhoneNumber") != undefined && localStorage.getItem("driverPhoneNumber") != "")) {
+	    		checkCompanyCode();
+	    	} else if (device.platform == "Android") {
+	    		window.plugins.toast.showLongBottom("Error getting your phone number, try adding it in the Settings");
+	    		localStorage.setItem("phoneNumberError", true);
+	    		setStateReadyForDrive();
+	    	} else {
+	    		window.plugins.toast.showShortLong("You need to input your phone number in Settings if you want the customer to be able to call you");
+	    		setStateReadyForDrive();
+	    	}
+    	} else {
+    		checkCompanyCode();
+    	}
+    }
 
     function checkCompanyCode() {
     	if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
@@ -206,8 +232,12 @@ angular.module('app.controllers', [])
         		currentLongitude: deviceLongitude,
         		companyName: companyName,
         		timeStamp: Date.now()});
-        	if (driverPhoneNumber != undefined && localStorage.getItem("checkbox") == "true") {
-        		firebaseDB.update({driverPhoneNumber: driverPhoneNumber});
+        	if (localStorage.getItem("checkbox") == "true") {
+        		if (driverPhoneNumber != undefined && driverPhoneNumber != "") {
+	        		firebaseDB.update({driverPhoneNumber: driverPhoneNumber});
+	        	} else if (localStorage.getItem("driverPhoneNumber") != undefined && localStorage.getItem("driverPhoneNumber") != "") {
+	        		firebaseDB.update({driverPhoneNumber: localStorage.getItem("driverPhoneNumber")});
+	        	}
         	}
         	sendText(savedAddressInput);
 		} else {	//destination is too far away
@@ -343,7 +373,7 @@ angular.module('app.controllers', [])
 			 //Both
 		     desiredAccuracy: 1, // Desired Accuracy of the location updates (lower means more accurate but more battery consumption)
 		     distanceFilter: 10, // (Meters) How far you must move from the last point to trigger a location update
-		     debug: true, // <-- Enable to show visual indications when you receive a background location update
+		     debug: false, // <-- Enable to show visual indications when you receive a background location update
 		     interval: 10000, // (Milliseconds) Requested Interval in between location updates.
 		     //Android Only
 		     notificationTitle: 'MapSnap', // customize the title of the notification
@@ -461,6 +491,9 @@ angular.module('app.controllers', [])
 	var codeElement = document.getElementById("compcode")
 	var checkboxElement = document.getElementById("checkbox").getElementsByTagName('input')[0];
 	var warningText = document.getElementById("warningText");
+	var phoneNumberSettingsInput = document.getElementById("phoneInputSettings");
+	var phoneNumberSettingsContainer = document.getElementById("phoneInputSettingsContainer");
+	var phoneNumberSettingsTitle = document.getElementById("phoneNumberSettingsTitle");
 	var prevMessageInput;
 	var SMS_CHAR_LIMIT = 160;
 	var LINK_LENGTH = 40;
@@ -481,15 +514,20 @@ angular.module('app.controllers', [])
 			checkToShowWarningText();
 		});
 		codeElement.addEventListener('input', function() {
-			localStorage.setItem("compcode", codeElement.value)
+			localStorage.setItem("compcode", codeElement.value);
 		});
 		checkboxElement.addEventListener('click', function() {
-			localStorage.setItem("checkbox", checkboxElement.checked)
+			localStorage.setItem("checkbox", checkboxElement.checked);
+			checkShowPhoneInput();
+		});
+		phoneNumberSettingsInput.addEventListener('input', function() {
+			localStorage.setItem("driverPhoneNumber", phoneNumberSettingsInput.value);
 		});
 
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
 		checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
+		checkShowPhoneInput();
 
 		prevMessageInput = messageElement.value;
 		checkToShowWarningText();
@@ -499,11 +537,27 @@ angular.module('app.controllers', [])
 	  console.log("No local storage support");
 	}
 
+	//code executed every time view opened, not just on creation
+	$scope.$on('$ionicView.enter', function() {
+		checkShowPhoneInput();
+	})
+
 	function checkToShowWarningText() {
 		if (messageElement.value.indexOf("[link]") > -1) {
 			warningText.style.display = "none";
 		} else {
 			warningText.style.display = "block";
+		}
+	}
+
+	function checkShowPhoneInput() {
+		if (checkboxElement.checked == true && (device.platform == "iOS" || localStorage.getItem("phoneNumberError") == 'true')) {
+			phoneNumberSettingsTitle.style.display = "block";
+			phoneNumberSettingsContainer.style.display = "block";
+		} else {
+			console.log("not showing  " + (checkboxElement.checked == true) + (device.platform == "iOS") + (localStorage.getItem("phoneNumberError") == 'true'));
+			phoneNumberSettingsTitle.style.display = "none";
+			phoneNumberSettingsContainer.style.display = "none";
 		}
 	}
 })
