@@ -1,0 +1,24 @@
+/*
+Welcome to Custom CSS!
+
+To learn how this works, see http://wp.me/PEmnE-Bt
+*/
+@media screen and (max-width: 480px) {
+	body.home.has_trans_header .header {
+		position: absolute !important;
+		background-color: transparent !important;
+	}
+	
+	body.home.has_trans_header .header .logo h1 a {
+		color: #fff !important;
+	}
+	
+	.stat_content_inner {
+		margin-top: 150px;
+	}
+}
+
+.logo {
+	width: 180px;
+	height: 54px;
+}
