@@ -270,8 +270,9 @@ angular.module('app.controllers', [])
 		button1.addEventListener('click', button1NavigateClickListener);
 	}
 
-	function checkDistanceThreshold() {
-		if (dist < DISTANCE_SMS_THRESHOLD && !sentSecondSMS) {
+	function checkDistanceThreshold(distance) {
+		if (distance < DISTANCE_SMS_THRESHOLD && !sentSecondSMS) {
+			console.log("Distance is within SMS range");
 			sentSecondSMS = true;
 			$cordovaSms
 				.send(customerPhoneNumber, "Your driver is arriving soon!", smsOptions)
@@ -280,10 +281,13 @@ angular.module('app.controllers', [])
 				}, function(error) {
 					window.plugins.toast.showShortBottom("Failed to send arrival text");
 			});	
-		} else if (dist < DISTANCE_END_THRESHOLD) {
+		} else if (distance < DISTANCE_END_THRESHOLD) {
+			console.log("Distance is within end session range");
 			sessionID = null;
 			stopGPSPolling();
 			window.plugins.toast.showShortBottom("Arrived, ending session");
+		} else {
+			console.log("Distance isn't within SMS or end session ranges");
 		}
 	}
 
@@ -323,7 +327,7 @@ angular.module('app.controllers', [])
 		function updateUserLocation(position) {
 			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
 			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-			checkDistanceThreshold();
+			checkDistanceThreshold(dist);
 			//window.plugins.toast.showShortBottom('Location updated in foreground');
 			deviceLatitude = position.coords.latitude;
 			deviceLongitude = position.coords.longitude;
@@ -354,7 +358,7 @@ angular.module('app.controllers', [])
 		     console.log("We got a BG Update in registerForLocationUpdates.");
 		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-		     checkDistanceThreshold();
+		     checkDistanceThreshold(dist);
 		     deviceLatitude = location.latitude;
 		     deviceLongitude = location.longitude;
 		     lastTimeDeviceLocation = new Date().getTime();
