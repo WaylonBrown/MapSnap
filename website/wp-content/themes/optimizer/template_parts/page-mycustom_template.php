@@ -10,6 +10,7 @@ Template Name: Custom Full Width Page
 
 <?php global $optimizer;?>
 
+
 <?php get_header(); ?>
 
 
@@ -22,7 +23,6 @@ Template Name: Custom Full Width Page
 
         <!--CUSTOM PAGE HEADER STARTS-->
 
-            <?php get_template_part('framework/core','pageheader'); ?>
 
         <!--CUSTOM PAGE HEADER ENDS-->
 
