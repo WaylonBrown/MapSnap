@@ -20,11 +20,14 @@ angular.module('app.controllers', [])
 	var customerPhoneNumber;
 	var deviceLatitude;
 	var deviceLongitude;
+	var demoDestinationLat;
+	var demoDestinationLng;
 	var companyName;
 	var sessionID;
 	var firebaseDB;
 	var sentSecondSMS = false;
 	var lastTimeDeviceLocation;
+	var demoMode = false;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -83,9 +86,17 @@ angular.module('app.controllers', [])
 	var button1NavigateClickListener = function() {
 		window.plugins.toast.showShortBottom('Opening maps...');
 		if (device.platform == "Android") {
-			window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
+			if (!demoMode) {
+				window.open("geo:0,0?q=" + encodeURIComponent(savedAddressInput));
+			} else {
+				window.open("geo:" + demoDestinationLat + "," + demoDestinationLng + "?q=" + demoDestinationLat + "," + demoDestinationLng);
+			}
 		} else if (device.platform = "iOS") {
-			window.open('maps://?q=daddr='+destination);
+			if (!demoMode) {
+				window.open('maps://?q=daddr=' + encodeURIComponent(savedAddressInput));
+			} else {
+				window.open('maps://?q=daddr=' + demoDestinationLat + "," + demoDestinationLng);
+			}
 		}
 	};
 	//stop drive
@@ -101,6 +112,7 @@ angular.module('app.controllers', [])
     };
 
     function checkDriverPhoneNumber() {
+    	demoMode = false;
     	//if driver wants to share phone number
     	if (localStorage.getItem("checkbox") == 'true') {
     		//if we have their phone number
@@ -121,38 +133,55 @@ angular.module('app.controllers', [])
     }
 
     function checkCompanyCode() {
-    	if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
-			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
-			setStateReadyForDrive();
-		} else {
-			var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode").replace(/\s/g, '').toLowerCase());
-			companyCodeDB.once("value", function(snapshot) {
-  				var companyExists = snapshot.exists();
-  				if (companyExists) {
-  					setStateGettingLocation();
-  					var dataObject = companyCodeDB.on("value", function(snapshot) {
-          				companyName = snapshot.val().name;
-          				console.log("Company exists with name " + companyName);
-          				if (companyName != undefined) {
-							checkValuesForDrive();
-          				} else {
-          					window.plugins.toast.showShortBottom("Company name not defined, please contact MapSnap")
-							setStateReadyForDrive();
-          				}
-          			});
-  				} else {
-  					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly in the Settings")
-					setStateReadyForDrive();
-  				}
-  			});
+    	if (!isInDemoMode()) {
+    		console.log("Not in demo mode");
+    		if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
+				window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.');
+				setStateReadyForDrive();
+			} else {
+				var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode").replace(/\s/g, '').toLowerCase());
+				companyCodeDB.once("value", function(snapshot) {
+	  				var companyExists = snapshot.exists();
+	  				if (companyExists) {
+	  					setStateGettingLocation();
+	  					var dataObject = companyCodeDB.on("value", function(snapshot) {
+	          				companyName = snapshot.val().name;
+	          				console.log("Company exists with name " + companyName);
+	          				if (companyName != undefined) {
+								checkValuesForDrive();
+	          				} else {
+	          					window.plugins.toast.showShortBottom("Company name not defined, please contact MapSnap")
+								setStateReadyForDrive();
+	          				}
+	          			});
+	  				} else {
+	  					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly in the Settings")
+						setStateReadyForDrive();
+	  				}
+	  			});
+			}
+    	} else {
+    		console.log("In demo mode");
+    		demoMode = true;
+    		companyName = "DEMO MODE (Your company name here)";
+    		setStateGettingLocation();
+    		checkValuesForDrive();
+    	}
+    	
+	}
+
+	function isInDemoMode() {
+		if (localStorage.getItem("compcode") == undefined || localStorage.getItem("compcode") == "") {
+			return false;
 		}
+		return localStorage.getItem("compcode").replace(/\s/g, '').toLowerCase() == "demo";
 	}
 
 	function checkValuesForDrive() {
     	if (phoneInput.value == "" || isNaN(phoneInput.value)) {
 			window.plugins.toast.showShortBottom('Enter a valid phone number in the format 1234567890')
 			setStateReadyForDrive();
-		} else if (addressInput.value == "") {
+		} else if (addressInput.value == "" && !demoMode) {
 			window.plugins.toast.showShortBottom('Enter a valid address')
 			setStateReadyForDrive();
 		} else {
@@ -162,49 +191,74 @@ angular.module('app.controllers', [])
 			console.log("Generated session ID, firebase URL: " + firebaseURL);
 			firebaseDB = new Firebase(firebaseURL);
 
-			//get address coordinates
-			var xmlHttp = new XMLHttpRequest();
-		    xmlHttp.onreadystatechange = function() { 
-		        if (xmlHttp.readyState == 4) {
-		        	if (xmlHttp.status == 200) {
-		        		console.log("Address results returned");
-			        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
-			            	window.plugins.toast.showShortBottom("Address not found");
-			            	setStateReadyForDrive();
-			            } else {
-			            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
-			            	//destination coordinates found
-				            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
-				            	if (needsUpdatedLocation()) {
-				            		console.log("Getting new device position");
-					            	navigator.geolocation.getCurrentPosition(function(location) {
-					            		console.log("New device position recieved");
-					            		lastTimeDeviceLocation = new Date().getTime();
-					            		deviceLatitude = location.coords.latitude;
-					            		deviceLongitude = location.coords.longitude;
-					            		seeIfDestinationNearby()
-					            	}, function(error) { 
-					            		setStateReadyForDrive();
-					            		window.plugins.toast.showShortBottom("Couldn't get current location");
-					            	}, {timeout: 10000});
-				            	} else {
-				            		console.log("Using previous device position")
-				            		seeIfDestinationNearby();
-				            	}
-				            } else {	//destination coordinates not found
+			if (!demoMode) {
+				//get address coordinates
+				var xmlHttp = new XMLHttpRequest();
+			    xmlHttp.onreadystatechange = function() { 
+			        if (xmlHttp.readyState == 4) {
+			        	if (xmlHttp.status == 200) {
+			        		console.log("Address results returned");
+				        	if (JSON.parse(xmlHttp.response).status == "ZERO_RESULTS") {
+				            	window.plugins.toast.showShortBottom("Address not found");
 				            	setStateReadyForDrive();
-			            		window.plugins.toast.showLongBottom("Couldn't find destination location");
+				            } else {
+				            	destinationCoordinates = JSON.parse(xmlHttp.response).results[0].geometry.location;
+				            	//destination coordinates found
+					            if (destinationCoordinates.lat != "" && destinationCoordinates.lng != "") {
+					            	if (needsUpdatedLocation()) {
+					            		console.log("Getting new device position");
+						            	navigator.geolocation.getCurrentPosition(function(location) {
+						            		console.log("New device position recieved");
+						            		lastTimeDeviceLocation = new Date().getTime();
+						            		deviceLatitude = location.coords.latitude;
+						            		deviceLongitude = location.coords.longitude;
+						            		seeIfDestinationNearby()
+						            	}, function(error) { 
+						            		setStateReadyForDrive();
+						            		window.plugins.toast.showShortBottom("Couldn't get current location");
+						            	}, {timeout: 10000});
+					            	} else {
+					            		console.log("Using previous device position")
+					            		seeIfDestinationNearby();
+					            	}
+					            } else {	//destination coordinates not found
+					            	setStateReadyForDrive();
+				            		window.plugins.toast.showLongBottom("Couldn't find destination location");
+					            }
 				            }
-			            }
-		        	} else {
-		        		window.plugins.toast.showShortBottom("Couldn't load address results");
-		        		setStateReadyForDrive();
-		        	}
-		        } 
-		    }
-		    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
-		    xmlHttp.send(null);
+			        	} else {
+			        		window.plugins.toast.showShortBottom("Couldn't load address results");
+			        		setStateReadyForDrive();
+			        	}
+			        } 
+			    }
+			    xmlHttp.open("GET", "http://maps.google.com/maps/api/geocode/json?address=" + encodeURIComponent(addressInput.value) + "&sensor=false", true); // true for asynchronous 
+			    xmlHttp.send(null);
+			} else {
+				if (needsUpdatedLocation()) {
+            		console.log("Getting new device position - DEMO MODE");
+	            	navigator.geolocation.getCurrentPosition(function(location) {
+	            		console.log("New device position recieved");
+	            		lastTimeDeviceLocation = new Date().getTime();
+	            		deviceLatitude = location.coords.latitude;
+	            		deviceLongitude = location.coords.longitude;
+	            		generateDemoCoordinates();
+	            	}, function(error) { 
+	            		setStateReadyForDrive();
+	            		window.plugins.toast.showShortBottom("Couldn't get current location");
+	            	}, {timeout: 10000});
+            	} else {
+            		console.log("Using previous device position")
+            		generateDemoCoordinates();
+            	}
+			}			
 		}
+    }
+
+    function generateDemoCoordinates() {
+    	demoDestinationLat = deviceLatitude + 0.05;
+    	demoDestinationLng = deviceLongitude + 0.05;
+    	seeIfDestinationNearby();
     }
 
     function needsUpdatedLocation() {
@@ -222,16 +276,25 @@ angular.module('app.controllers', [])
 
     function seeIfDestinationNearby() {
     	//destination is nearby
-		if (distance(destinationCoordinates.lat, destinationCoordinates.lng, deviceLatitude, deviceLongitude) < 300) {
+		if ((!demoMode && distance(destinationCoordinates.lat, destinationCoordinates.lng, deviceLatitude, deviceLongitude) < 300) || 
+			(demoMode && distance(demoDestinationLat, demoDestinationLng, deviceLatitude, deviceLongitude) < 300)){
 			console.log("Destination is nearby");
 			savedAddressInput = addressInput.value
-        	firebaseDB.update({destinationAddress: savedAddressInput, 
-        		destinationLatitude: destinationCoordinates.lat, 
-        		destinationLongitude: destinationCoordinates.lng,
-        		currentLatitude: deviceLatitude,
+        	firebaseDB.update({currentLatitude: deviceLatitude,
         		currentLongitude: deviceLongitude,
         		companyName: companyName,
         		timeStamp: Date.now()});
+
+        	if (!demoMode) {
+        		firebaseDB.update({destinationAddress: savedAddressInput,
+        			destinationLatitude: destinationCoordinates.lat, 
+        			destinationLongitude: destinationCoordinates.lng});
+        	} else {
+        		firebaseDB.update({destinationAddress: (demoDestinationLat + "," + demoDestinationLng),
+        			destinationLatitude: demoDestinationLat,
+        			destinationLongitude: demoDestinationLng});
+        	}
+
         	if (localStorage.getItem("checkbox") == "true") {
         		if (driverPhoneNumber != undefined && driverPhoneNumber != "") {
 	        		firebaseDB.update({driverPhoneNumber: driverPhoneNumber});
@@ -356,7 +419,12 @@ angular.module('app.controllers', [])
 
 		function updateUserLocation(position) {
 			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
-			var dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+			var dist;
+			if (!demoMode) {
+				dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+			} else {
+				dist = distance(position.coords.latitude, position.coords.longitude, demoDestinationLat, demoDestinationLng);
+			}
 			checkDistanceThreshold(dist);
 			//window.plugins.toast.showShortBottom('Location updated in foreground');
 			deviceLatitude = position.coords.latitude;
@@ -384,14 +452,19 @@ angular.module('app.controllers', [])
 
 		//Register a callback for location updates, this is where location objects will be sent in the background
 		bgLocationServices.registerForLocationUpdates(function(location) {
-		     //console.log("We got a BG Update in registerForLocationUpdates" + JSON.stringify(location));
-		     console.log("We got a BG Update in registerForLocationUpdates.");
-		     firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
-		     var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-		     checkDistanceThreshold(dist);
-		     deviceLatitude = location.latitude;
-		     deviceLongitude = location.longitude;
-		     lastTimeDeviceLocation = new Date().getTime();
+			//console.log("We got a BG Update in registerForLocationUpdates" + JSON.stringify(location));
+			console.log("We got a BG Update in registerForLocationUpdates.");
+			firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
+			var dist;
+			if (!demoMode) {
+				dist = distance(location.latitude, location.longitudee, destinationCoordinates.lat, destinationCoordinates.lng);
+			} else {
+				dist = distance(location.latitude, location.longitude, demoDestinationLat, demoDestinationLng);
+			}
+			checkDistanceThreshold(dist);
+			deviceLatitude = location.latitude;
+			deviceLongitude = location.longitude;
+			lastTimeDeviceLocation = new Date().getTime();
 		}, function(err) {
 		     console.log("Error: Didnt get an update", err);
 		});
@@ -426,9 +499,6 @@ angular.module('app.controllers', [])
 		return dist
 	}
 
-	/***********
-	Actual code
-	***********/
 	button2.style.display="none";
 	if(localStorage != undefined) {
 		button1.addEventListener('click', button1DefaultClickListener);
