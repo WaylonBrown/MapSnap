@@ -125,7 +125,7 @@ angular.module('app.controllers', [])
 			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
 			setStateReadyForDrive();
 		} else {
-			var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode"));
+			var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode").replace(/\s/g, ''));
 			companyCodeDB.once("value", function(snapshot) {
   				var companyExists = snapshot.exists();
   				if (companyExists) {
