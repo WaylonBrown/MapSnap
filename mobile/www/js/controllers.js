@@ -125,7 +125,7 @@ angular.module('app.controllers', [])
 			window.plugins.toast.showShortBottom('You need to enter your company code in the Settings.')
 			setStateReadyForDrive();
 		} else {
-			var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode").replace(/\s/g, ''));
+			var companyCodeDB = new Firebase("https://boiling-fire-1004.firebaseio.com/company/" + localStorage.getItem("compcode").replace(/\s/g, '').toLowerCase());
 			companyCodeDB.once("value", function(snapshot) {
   				var companyExists = snapshot.exists();
   				if (companyExists) {
@@ -141,7 +141,7 @@ angular.module('app.controllers', [])
           				}
           			});
   				} else {
-  					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly. It is case sensitive.")
+  					window.plugins.toast.showShortBottom("That company code doesn't exists, see if you typed it correctly in the Settings")
 					setStateReadyForDrive();
   				}
   			});
