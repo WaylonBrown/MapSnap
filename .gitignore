@@ -4,3 +4,4 @@
 node_modules/
 platforms/
 plugins/
+!mobile/platforms/android/src/com/flybuy/cordova/location/BackgroundLocationUpdateService.java
