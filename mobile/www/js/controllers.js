@@ -49,13 +49,15 @@ angular.module('app.controllers', [])
   	//get phone number
   	if (device.platform == "Android") {
 		window.plugins.sim.requestReadPermission();
+		window.plugins.sim.getSimInfo(function(jsonObject) {
+			console.log("Phone number retrieved: " + jsonObject.phoneNumber);
+			driverPhoneNumber = jsonObject.phoneNumber;
+		}, function() {
+			console.log("Error getting phone number");
+		});
+	} else {
+		console.log("iOS, so not retreiving phone number");
 	}
-	window.plugins.sim.getSimInfo(function(jsonObject) {
-		console.log("Phone number retrieved: " + jsonObject.phoneNumber);
-		driverPhoneNumber = jsonObject.phoneNumber;
-	}, function() {
-		console.log("Error getting phone number");
-	});
 
 	// Bias the autocomplete object to the user's geographical location,
 	// as supplied by the browser's 'navigator.geolocation' object.
@@ -625,7 +627,6 @@ angular.module('app.controllers', [])
 			phoneNumberSettingsTitle.style.display = "block";
 			phoneNumberSettingsContainer.style.display = "block";
 		} else {
-			console.log("not showing  " + (checkboxElement.checked == true) + (device.platform == "iOS") + (localStorage.getItem("phoneNumberError") == 'true'));
 			phoneNumberSettingsTitle.style.display = "none";
 			phoneNumberSettingsContainer.style.display = "none";
 		}
