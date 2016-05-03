@@ -1,6 +1,6 @@
 var defaultMessage = "Your driver is on their way! View their drive here: [link]";
 var DISTANCE_SMS_THRESHOLD = 0.25; //in miles, distance where it'll send second SMS
-var DISTANCE_END_THRESHOLD = 0.14; //in miles, distance where it'll end the session
+var DISTANCE_END_THRESHOLD = 0.16; //in miles, distance where it'll end the session
 
 angular.module('app.controllers', [])
   

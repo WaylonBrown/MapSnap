@@ -46,7 +46,7 @@
       }
       #spaceFooter {
         position: fixed;
-        bottom: 92px;
+        bottom: 88px;
         width: 100%;
         height: 6px;
         background: #FFFFFF;
@@ -54,7 +54,7 @@
       }
       #arrivalFooter {
         position: fixed;
-        bottom: 60px;
+        bottom: 56px;
         width: 100%;
         height: 32px;
         background: #FFFFFF;
@@ -68,7 +68,7 @@
       }
       #distanceFooter {
         position: fixed;
-        bottom: 30px;
+        bottom: 26px;
         width: 100%;
         height:30px;
         background: #FFFFFF;
@@ -84,11 +84,11 @@
         position: fixed;
         bottom: 0;
         width: 100%;
-        height:30px;
+        height:26px;
         background: #FFFFFF;
         text-align: center;
         color: #042E64;
-        font-size: 16px;
+        font-size: 14px;
         font-family: 'Roboto';
         font-weight: 100;
         margin-left:auto;
@@ -102,7 +102,7 @@
     <div id="spaceFooter"></div>
     <div id="arrivalFooter">Loading arrival time...</div>
     <div id="distanceFooter"><i>Loading distance...</i></div>
-    <div id="linkFooter">Powered by <a href="http://www.mapsnap.net">MapSnap.net</a></div>
+    <div id="linkFooter">Powered by <a href="http://www.mapsnap.net">MapSnap</a></div>
     <script>
       var firebaseDB = new Firebase('https://boiling-fire-1004.firebaseio.com/mapID');
       var currentLatitude;
@@ -138,6 +138,10 @@
               callDriverButton.style.display = "none";
             } else {
               callDriverButton.style.display = "inline-block";
+            }
+
+            if (companyName != undefined && companyName != "") {
+              document.title = companyName;
             }
 
             if (!initialCoordsLoaded) {
