@@ -459,7 +459,7 @@ angular.module('app.controllers', [])
 			firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 			var dist;
 			if (!demoMode) {
-				dist = distance(location.latitude, location.longitudee, destinationCoordinates.lat, destinationCoordinates.lng);
+				dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
 			} else {
 				dist = distance(location.latitude, location.longitude, demoDestinationLat, demoDestinationLng);
 			}
