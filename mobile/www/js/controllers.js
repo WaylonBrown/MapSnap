@@ -46,14 +46,14 @@ angular.module('app.controllers', [])
 		localStorage.setItem("phoneNumberError", false);
 	}
 
-  	//get phone number
+	//get phone number
   	if (device.platform == "Android") {
 		window.plugins.sim.requestReadPermission();
 		window.plugins.sim.getSimInfo(function(jsonObject) {
 			console.log("Phone number retrieved: " + jsonObject.phoneNumber);
 			driverPhoneNumber = jsonObject.phoneNumber;
 		}, function() {
-			console.log("Error getting phone number");
+			console.log("Error getting initial phone number");
 		});
 	} else {
 		console.log("iOS, so not retreiving phone number");
@@ -122,9 +122,22 @@ angular.module('app.controllers', [])
 					(localStorage.getItem("driverPhoneNumber") != undefined && localStorage.getItem("driverPhoneNumber") != "")) {
 	    		checkCompanyCode();
 	    	} else if (device.platform == "Android") {
-	    		window.plugins.toast.showLongBottom("Error getting your phone number, try adding it in the Settings");
-	    		localStorage.setItem("phoneNumberError", true);
-	    		setStateReadyForDrive();
+	    		//try getting phone number again
+				window.plugins.sim.getSimInfo(function(jsonObject) {
+					console.log("Phone number retrieved: " + jsonObject.phoneNumber);
+					driverPhoneNumber = jsonObject.phoneNumber;
+					if (driverPhoneNumber == undefined || driverPhoneNumber == "") {
+						window.plugins.toast.showLongBottom("Error getting your phone number, try adding it in the Settings");
+			    		localStorage.setItem("phoneNumberError", true);
+			    		setStateReadyForDrive();
+					} else {
+						checkCompanyCode();
+					}
+				}, function() {
+					window.plugins.toast.showLongBottom("Error getting your phone number, try adding it in the Settings");
+		    		localStorage.setItem("phoneNumberError", true);
+		    		setStateReadyForDrive();
+				});
 	    	} else {
 	    		window.plugins.toast.showShortLong("You need to input your phone number in Settings if you want the customer to be able to call you");
 	    		setStateReadyForDrive();
