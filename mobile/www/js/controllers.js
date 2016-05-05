@@ -29,6 +29,7 @@ angular.module('app.controllers', [])
 	var lastTimeDeviceLocation;
 	var demoMode = false;
 	var appIsInForeground = true;
+	var showSMSNotSentMessage = false;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -386,6 +387,7 @@ angular.module('app.controllers', [])
 			sentSecondSMS = true;
 			if (device.platform == "iOS" && !appIsInForeground) {
 				console.log("iOS and app in background, not sending second SMS");
+				showSMSNotSentMessage = true;
 			} else {
 				console.log("Sending second SMS");
 				$cordovaSms
@@ -394,7 +396,7 @@ angular.module('app.controllers', [])
 					window.plugins.toast.showShortBottom("Sent an arrival text");
 				}, function(error) {
 					window.plugins.toast.showShortBottom("Failed to send arrival text");
-			});
+				});
 			}	
 		} else if (distance < DISTANCE_END_THRESHOLD) {
 			console.log("Distance is within end session range");
@@ -572,6 +574,10 @@ angular.module('app.controllers', [])
 	document.addEventListener("resume", function() {
 		console.log("App has been put in foreground.");
 		appIsInForeground = true;
+		if (showSMSNotSentMessage) {
+			showSMSNotSentMessage = false;
+			window.plugins.toast.showLongBottom("Didn't send arrival SMS since app was in background");
+		}
 	}, false);
 
 	//hack to get clicking on autocomplete working
