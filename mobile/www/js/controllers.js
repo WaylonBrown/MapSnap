@@ -3,6 +3,7 @@ var DISTANCE_SMS_THRESHOLD = 0.25; //in miles, distance where it'll send second 
 var DISTANCE_END_THRESHOLD = 0.16; //in miles, distance where it'll start timer to end session
 var TIME_TIL_END_SESSION = 30; //in seconds, time after distance end threshold where
 							   //it'll automatically end the session
+var OVERALL_SESSION_TIMER = 60; //in minutes, don't let any session last longer than this
 
 angular.module('app.controllers', [])
   
@@ -33,6 +34,7 @@ angular.module('app.controllers', [])
 	var appIsInForeground = true;
 	var showSMSNotSentMessage = false;
 	var endSessionTimerRunning = false;
+	var overallTimer;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -409,7 +411,6 @@ angular.module('app.controllers', [])
 			setTimeout(function() {
 				endSessionTimerRunning = false;
 				console.log("Timer ended, ending session");
-				sessionID = null;
 				stopGPSPolling();
 				window.plugins.toast.showShortBottom("Arrived, ending session");
 			}, TIME_TIL_END_SESSION * 1000);
@@ -421,9 +422,11 @@ angular.module('app.controllers', [])
 	}
 
 	function stopGPSPolling() {
+		sessionID = null;
 		clearInterval(activeForegroundWatcher);
 		bgLocationServices.stop();
 		setStateReadyForDrive();
+		clearTimeout(overallTimer);
 	}
 
 	function startGPS() {
@@ -519,6 +522,12 @@ angular.module('app.controllers', [])
 
 		//Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
 		bgLocationServices.start();
+
+		//create overall session timer
+		overallTimer = setTimeout(function() {
+			stopGPSPolling();
+			console.log("Session has been timed out");
+		}, OVERALL_SESSION_TIMER * 1000 * 60);
 	}
 
 	//distance between two coordinates in miles
