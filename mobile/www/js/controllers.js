@@ -139,7 +139,8 @@ angular.module('app.controllers', [])
 		    		setStateReadyForDrive();
 				});
 	    	} else {
-	    		window.plugins.toast.showShortLong("You need to input your phone number in Settings if you want the customer to be able to call you");
+	    		console.log("Device is iOS and no driver phone number set");
+	    		window.plugins.toast.showShortBottom("You need to input your phone number in Settings if you want the customer to be able to call you");
 	    		setStateReadyForDrive();
 	    	}
     	} else {
