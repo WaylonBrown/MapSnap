@@ -95,9 +95,9 @@ angular.module('app.controllers', [])
 			}
 		} else if (device.platform = "iOS") {
 			if (!demoMode) {
-				window.open('maps://?q=daddr=' + encodeURIComponent(savedAddressInput));
+				window.open('maps://?q=' + encodeURIComponent(savedAddressInput));
 			} else {
-				window.open('maps://?q=daddr=' + demoDestinationLat + "," + demoDestinationLng);
+				window.open('maps://?q=' + demoDestinationLat + "," + demoDestinationLng);
 			}
 		}
 	};
@@ -488,14 +488,14 @@ angular.module('app.controllers', [])
 		//Register for Activity Updates (ANDROID ONLY)
 		//Uses the Detected Activies API to send back an array of activities and their confidence levels
 		//See here for more information: //https://developers.google.com/android/reference/com/google/android/gms/location/DetectedActivity
-		bgLocationServices.registerForActivityUpdates(function(activities) {
-		     // console.log("We got a BG Update in registerForActivityUpdates" + activities);
-		     // firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
-		     // var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-		     // checkDistanceThreshold();
-		}, function(err) {
-		     console.log("Error: Something went wrong", err);
-		});
+		// bgLocationServices.registerForActivityUpdates(function(activities) {
+		//      // console.log("We got a BG Update in registerForActivityUpdates" + activities);
+		//      // firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
+		//      // var dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+		//      // checkDistanceThreshold();
+		// }, function(err) {
+		//      console.log("Error: Something went wrong", err);
+		// });
 
 		//Start the Background Tracker. When you enter the background tracking will start, and stop when you enter the foreground.
 		bgLocationServices.start();
