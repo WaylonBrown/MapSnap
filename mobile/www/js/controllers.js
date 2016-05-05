@@ -457,6 +457,7 @@ angular.module('app.controllers', [])
 		}
 
 		function updateUserLocation(position) {
+			console.log("Foreground location update");
 			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
 			var dist;
 			if (!demoMode) {
@@ -491,8 +492,7 @@ angular.module('app.controllers', [])
 
 		//Register a callback for location updates, this is where location objects will be sent in the background
 		bgLocationServices.registerForLocationUpdates(function(location) {
-			//console.log("We got a BG Update in registerForLocationUpdates" + JSON.stringify(location));
-			console.log("We got a BG Update in registerForLocationUpdates.");
+			console.log("Background location update");
 			firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
 			var dist;
 			if (!demoMode) {
