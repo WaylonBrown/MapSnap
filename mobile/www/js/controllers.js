@@ -656,6 +656,7 @@ angular.module('app.controllers', [])
 		messageElement.value = localStorage.getItem("message")
 		codeElement.value = localStorage.getItem("compcode")
 		checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
+		phoneNumberSettingsInput.value = localStorage.getItem("driverPhoneNumber");
 		checkShowPhoneInput();
 
 		prevMessageInput = messageElement.value;
