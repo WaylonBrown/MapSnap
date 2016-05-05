@@ -1,6 +1,8 @@
 var defaultMessage = "Your driver is on their way! View their drive here: [link]";
 var DISTANCE_SMS_THRESHOLD = 0.25; //in miles, distance where it'll send second SMS
-var DISTANCE_END_THRESHOLD = 0.16; //in miles, distance where it'll end the session
+var DISTANCE_END_THRESHOLD = 0.16; //in miles, distance where it'll start timer to end session
+var TIME_TIL_END_SESSION = 30; //in seconds, time after distance end threshold where
+							   //it'll automatically end the session
 
 angular.module('app.controllers', [])
   
@@ -30,6 +32,7 @@ angular.module('app.controllers', [])
 	var demoMode = false;
 	var appIsInForeground = true;
 	var showSMSNotSentMessage = false;
+	var endSessionTimerRunning = false;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -315,8 +318,10 @@ angular.module('app.controllers', [])
 
         	if (localStorage.getItem("checkbox") == "true") {
         		if (driverPhoneNumber != undefined && driverPhoneNumber != "") {
+        			console.log("Driver phone number from variable: " + driverPhoneNumber);
 	        		firebaseDB.update({driverPhoneNumber: driverPhoneNumber});
 	        	} else if (localStorage.getItem("driverPhoneNumber") != undefined && localStorage.getItem("driverPhoneNumber") != "") {
+	        		console.log("Driver phone number from settings: " + localStorage.getItem("driverPhoneNumber"));
 	        		firebaseDB.update({driverPhoneNumber: localStorage.getItem("driverPhoneNumber")});
 	        	}
         	}
@@ -398,11 +403,18 @@ angular.module('app.controllers', [])
 					window.plugins.toast.showShortBottom("Failed to send arrival text");
 				});
 			}	
-		} else if (distance < DISTANCE_END_THRESHOLD) {
-			console.log("Distance is within end session range");
-			sessionID = null;
-			stopGPSPolling();
-			window.plugins.toast.showShortBottom("Arrived, ending session");
+		} else if (distance < DISTANCE_END_THRESHOLD && !endSessionTimerRunning) {
+			console.log("Distance is within end session range, setting timer");
+			endSessionTimerRunning = true;
+			setTimeout(function() {
+				endSessionTimerRunning = false;
+				console.log("Timer ended, ending session");
+				sessionID = null;
+				stopGPSPolling();
+				window.plugins.toast.showShortBottom("Arrived, ending session");
+			}, TIME_TIL_END_SESSION * 1000);
+		} else if (endSessionTimerRunning) {
+			console.log("Got location but end session timer is running");
 		} else {
 			console.log("Distance isn't within SMS or end session ranges");
 		}
