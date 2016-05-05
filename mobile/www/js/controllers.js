@@ -28,6 +28,7 @@ angular.module('app.controllers', [])
 	var sentSecondSMS = false;
 	var lastTimeDeviceLocation;
 	var demoMode = false;
+	var appIsInForeground = true;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -383,13 +384,18 @@ angular.module('app.controllers', [])
 		if (distance < DISTANCE_SMS_THRESHOLD && !sentSecondSMS) {
 			console.log("Distance is within SMS range");
 			sentSecondSMS = true;
-			$cordovaSms
+			if (device.platform == "iOS" && !appIsInForeground) {
+				console.log("iOS and app in background, not sending second SMS");
+			} else {
+				console.log("Sending second SMS");
+				$cordovaSms
 				.send(customerPhoneNumber, "Your driver is arriving soon!", smsOptions)
 				.then(function() { 
 					window.plugins.toast.showShortBottom("Sent an arrival text");
 				}, function(error) {
 					window.plugins.toast.showShortBottom("Failed to send arrival text");
-			});	
+			});
+			}	
 		} else if (distance < DISTANCE_END_THRESHOLD) {
 			console.log("Distance is within end session range");
 			sessionID = null;
@@ -557,6 +563,16 @@ angular.module('app.controllers', [])
       {types: ['geocode']});
 	geolocate();
 	autoCompleteHack();
+
+	document.addEventListener("pause", function() {
+		console.log("App has been put in background.");
+		appIsInForeground = false;
+	}, false);
+
+	document.addEventListener("resume", function() {
+		console.log("App has been put in foreground.");
+		appIsInForeground = true;
+	}, false);
 
 	//hack to get clicking on autocomplete working
 	function autoCompleteHack() {
