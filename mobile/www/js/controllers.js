@@ -563,7 +563,11 @@ angular.module('app.controllers', [])
 		callText.style.display = "none";
 	});
 	callText.addEventListener('click', function() {
-		window.location = "tel:" + phoneInput.value;
+		window.plugins.CallNumber.callNumber(function() {
+			console.log("Call number successful");
+		}, function() {
+			window.plugins.toast.showShortBottom("Error calling phone number, try calling manually");
+		}, phoneInput.value, true);
 	});
 	clearText2.addEventListener('click', function() {
 		addressInput.value = "";

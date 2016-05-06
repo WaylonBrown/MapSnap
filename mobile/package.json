@@ -24,7 +24,8 @@
     "cordova-plugin-x-toast",
     "cordova-plugin-sim",
     "https://github.com/pmwisdom/cordova-background-geolocation-services.git",
-    "cordova-sms-plugin"
+    "cordova-sms-plugin",
+    "https://github.com/Rohfosho/CordovaCallNumberPlugin.git"
   ],
   "cordovaPlatforms": [
     "android",
