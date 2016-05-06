@@ -14,6 +14,7 @@ angular.module('app.controllers', [])
 	var addressInput = document.getElementById("addressInput")
 	var clearText1 = document.getElementById("clearText1")
 	var clearText2 = document.getElementById("clearText2")
+	var callText = document.getElementById("callText");
 	var savedAddressInput;
 	var foregroundGPSWatchID;
 	var activeForegroundWatcher;
@@ -552,6 +553,10 @@ angular.module('app.controllers', [])
 	clearText1.addEventListener('click', function() {
 		phoneInput.value = "";
 		clearText1.style.display = "none";
+		callText.style.display = "none";
+	});
+	callText.addEventListener('click', function() {
+		window.location = "tel:" + phoneInput.value;
 	});
 	clearText2.addEventListener('click', function() {
 		addressInput.value = "";
@@ -560,8 +565,10 @@ angular.module('app.controllers', [])
 	phoneInput.addEventListener('input', function() {
 		if (phoneInput.value.length > 0) {
 			clearText1.style.display = "block";
+			callText.style.display = "inline";
 		} else {
 			clearText1.style.display = "none";
+			callText.style.display = "none";
 		}
 	});
 	addressInput.addEventListener('input', function() {
