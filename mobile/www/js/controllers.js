@@ -457,20 +457,23 @@ angular.module('app.controllers', [])
 
 		}
 
+		//TODO: this actually runs in background on iOS, maybe Android. Need to actually handle.
 		function updateUserLocation(position) {
-			console.log("Foreground location update");
-			firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
-			var dist;
-			if (!demoMode) {
-				dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-			} else {
-				dist = distance(position.coords.latitude, position.coords.longitude, demoDestinationLat, demoDestinationLng);
+			if (appIsInForeground) {
+				console.log("Foreground location update");
+				firebaseDB.update({currentLatitude: position.coords.latitude, currentLongitude: position.coords.longitude});
+				var dist;
+				if (!demoMode) {
+					dist = distance(position.coords.latitude, position.coords.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+				} else {
+					dist = distance(position.coords.latitude, position.coords.longitude, demoDestinationLat, demoDestinationLng);
+				}
+				checkDistanceThreshold(dist);
+				//window.plugins.toast.showShortBottom('Location updated in foreground');
+				deviceLatitude = position.coords.latitude;
+				deviceLongitude = position.coords.longitude;
+				lastTimeDeviceLocation = new Date().getTime();
 			}
-			checkDistanceThreshold(dist);
-			//window.plugins.toast.showShortBottom('Location updated in foreground');
-			deviceLatitude = position.coords.latitude;
-			deviceLongitude = position.coords.longitude;
-			lastTimeDeviceLocation = new Date().getTime();
 		}
 
 		//////////
@@ -481,9 +484,9 @@ angular.module('app.controllers', [])
 		bgLocationServices.configure({
 			 //Both
 		     desiredAccuracy: 1, // Desired Accuracy of the location updates (lower means more accurate but more battery consumption)
-		     distanceFilter: 10, // (Meters) How far you must move from the last point to trigger a location update
+		     distanceFilter: 7, // (Meters) How far you must move from the last point to trigger a location update
 		     debug: false, // <-- Enable to show visual indications when you receive a background location update
-		     interval: 10000, // (Milliseconds) Requested Interval in between location updates.
+		     interval: 7000, // (Milliseconds) Requested Interval in between location updates.
 		     //Android Only
 		     notificationTitle: 'MapSnap', // customize the title of the notification
 		     notificationText: 'Sharing location, tap to open', //customize the text of the notification
