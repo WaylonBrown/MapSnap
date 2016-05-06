@@ -563,6 +563,7 @@ angular.module('app.controllers', [])
 		callText.style.display = "none";
 	});
 	callText.addEventListener('click', function() {
+		window.plugins.toast.showShortBottom("Error calling phone number, try calling manually");
 		window.plugins.CallNumber.callNumber(function() {
 			console.log("Call number successful");
 		}, function() {
