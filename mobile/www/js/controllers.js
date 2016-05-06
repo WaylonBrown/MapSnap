@@ -1,7 +1,7 @@
 var defaultMessage = "Your driver is on their way! View their drive here: [link]";
 var DISTANCE_SMS_THRESHOLD = 0.25; //in miles, distance where it'll send second SMS
 var DISTANCE_END_THRESHOLD = 0.16; //in miles, distance where it'll start timer to end session
-var TIME_TIL_END_SESSION = 30; //in seconds, time after distance end threshold where
+var TIME_TIL_END_SESSION = 60; //in seconds, time after distance end threshold where
 							   //it'll automatically end the session
 var OVERALL_SESSION_TIMER = 60; //in minutes, don't let any session last longer than this
 
@@ -36,6 +36,7 @@ angular.module('app.controllers', [])
 	var showSMSNotSentMessage = false;
 	var endSessionTimerRunning = false;
 	var overallTimer;
+	var endSessionTimer;
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -409,8 +410,7 @@ angular.module('app.controllers', [])
 		} else if (distance < DISTANCE_END_THRESHOLD && !endSessionTimerRunning) {
 			console.log("Distance is within end session range, setting timer");
 			endSessionTimerRunning = true;
-			setTimeout(function() {
-				endSessionTimerRunning = false;
+			endSessionTimer = setTimeout(function() {
 				console.log("Timer ended, ending session");
 				stopGPSPolling();
 				window.plugins.toast.showShortBottom("Arrived, ending session");
@@ -423,11 +423,13 @@ angular.module('app.controllers', [])
 	}
 
 	function stopGPSPolling() {
+		endSessionTimerRunning = false;
 		sessionID = null;
 		clearInterval(activeForegroundWatcher);
 		bgLocationServices.stop();
-		setStateReadyForDrive();
 		clearTimeout(overallTimer);
+		clearTimeout(endSessionTimer);
+		setStateReadyForDrive();
 	}
 
 	function startGPS() {
@@ -496,18 +498,20 @@ angular.module('app.controllers', [])
 
 		//Register a callback for location updates, this is where location objects will be sent in the background
 		bgLocationServices.registerForLocationUpdates(function(location) {
-			console.log("Background location update");
-			firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
-			var dist;
-			if (!demoMode) {
-				dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
-			} else {
-				dist = distance(location.latitude, location.longitude, demoDestinationLat, demoDestinationLng);
+			if (!appIsInForeground) {
+				console.log("Background location update");
+				firebaseDB.update({currentLatitude: location.latitude, currentLongitude: location.longitude});
+				var dist;
+				if (!demoMode) {
+					dist = distance(location.latitude, location.longitude, destinationCoordinates.lat, destinationCoordinates.lng);
+				} else {
+					dist = distance(location.latitude, location.longitude, demoDestinationLat, demoDestinationLng);
+				}
+				checkDistanceThreshold(dist);
+				deviceLatitude = location.latitude;
+				deviceLongitude = location.longitude;
+				lastTimeDeviceLocation = new Date().getTime();
 			}
-			checkDistanceThreshold(dist);
-			deviceLatitude = location.latitude;
-			deviceLongitude = location.longitude;
-			lastTimeDeviceLocation = new Date().getTime();
 		}, function(err) {
 		     console.log("Error: Didnt get an update", err);
 		});
