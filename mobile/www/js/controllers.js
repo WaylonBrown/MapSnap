@@ -657,49 +657,58 @@ angular.module('app.controllers', [])
 	var phoneNumberSettingsInput = document.getElementById("phoneInputSettings");
 	var phoneNumberSettingsContainer = document.getElementById("phoneInputSettingsContainer");
 	var phoneNumberSettingsTitle = document.getElementById("phoneNumberSettingsTitle");
+	var divider = document.getElementById("divider");
+	var iosMessage = document.getElementById("iosMessage");
 	var prevMessageInput;
 	var SMS_CHAR_LIMIT = 160;
 	var LINK_LENGTH = 40;
 	var LINK_EMBED_LENGTH = 6; //length of "[link]"
 
-	if(localStorage != undefined)
-	{
-		console.log("Local storage supported.");
+	document.addEventListener("deviceready", function() {
+		if(localStorage != undefined)
+		{
+			console.log("Local storage supported.");
 
-		//input listeners
-		messageElement.addEventListener('input', function() {
-			var max_chars = SMS_CHAR_LIMIT - LINK_LENGTH + LINK_EMBED_LENGTH;
-		    if(messageElement.value.length > max_chars) {
-		        messageElement.value = prevMessageInput;
-		    }
-		    prevMessageInput = messageElement.value;
-			localStorage.setItem("message", messageElement.value);
-			checkToShowWarningText();
-		});
-		codeElement.addEventListener('input', function() {
-			localStorage.setItem("compcode", codeElement.value);
-		});
-		checkboxElement.addEventListener('click', function() {
-			localStorage.setItem("checkbox", checkboxElement.checked);
+			//input listeners
+			messageElement.addEventListener('input', function() {
+				var max_chars = SMS_CHAR_LIMIT - LINK_LENGTH + LINK_EMBED_LENGTH;
+			    if(messageElement.value.length > max_chars) {
+			        messageElement.value = prevMessageInput;
+			    }
+			    prevMessageInput = messageElement.value;
+				localStorage.setItem("message", messageElement.value);
+				checkToShowWarningText();
+			});
+			codeElement.addEventListener('input', function() {
+				localStorage.setItem("compcode", codeElement.value);
+			});
+			checkboxElement.addEventListener('click', function() {
+				localStorage.setItem("checkbox", checkboxElement.checked);
+				checkShowPhoneInput();
+			});
+			phoneNumberSettingsInput.addEventListener('input', function() {
+				localStorage.setItem("driverPhoneNumber", phoneNumberSettingsInput.value);
+			});
+
+			messageElement.value = localStorage.getItem("message")
+			codeElement.value = localStorage.getItem("compcode")
+			checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
+			phoneNumberSettingsInput.value = localStorage.getItem("driverPhoneNumber");
 			checkShowPhoneInput();
-		});
-		phoneNumberSettingsInput.addEventListener('input', function() {
-			localStorage.setItem("driverPhoneNumber", phoneNumberSettingsInput.value);
-		});
 
-		messageElement.value = localStorage.getItem("message")
-		codeElement.value = localStorage.getItem("compcode")
-		checkboxElement.checked = localStorage.getItem("checkbox") === 'true'
-		phoneNumberSettingsInput.value = localStorage.getItem("driverPhoneNumber");
-		checkShowPhoneInput();
+			prevMessageInput = messageElement.value;
+			checkToShowWarningText();
 
-		prevMessageInput = messageElement.value;
-		checkToShowWarningText();
-	}
-	else
-	{
-	  console.log("No local storage support");
-	}
+			if (device.platform != "iOS") {
+				divider.style.display = "none";
+				iosMessage.style.display = "none";
+			}
+		}
+		else
+		{
+		  console.log("No local storage support");
+		}
+	});
 
 	//code executed every time view opened, not just on creation
 	$scope.$on('$ionicView.enter', function() {
