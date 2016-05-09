@@ -37,6 +37,11 @@ angular.module('app.controllers', [])
 	var endSessionTimerRunning = false;
 	var overallTimer;
 	var endSessionTimer;
+	var autoComplete;
+
+	/*
+	STARTUP
+	*/
 
 	//set local storage defaults
 	if (localStorage.getItem("message") == undefined) {
@@ -67,6 +72,84 @@ angular.module('app.controllers', [])
 	} else {
 		console.log("iOS, so not retreiving phone number");
 	}
+
+	/*
+	LIFECYCLE METHODS
+	*/
+
+	document.addEventListener("deviceready", function() {
+		button2.style.display="none";
+		if(localStorage != undefined) {
+			button1.addEventListener('click', button1DefaultClickListener);
+			button2.addEventListener('click', button2ClickListener);
+		}
+		clearText1.addEventListener('click', function() {
+			phoneInput.value = "";
+			clearText1.style.display = "none";
+			callText.style.display = "none";
+		});
+		callText.addEventListener('click', function() {
+			window.plugins.toast.showShortBottom("Calling...");
+			window.plugins.CallNumber.callNumber(function() {
+				console.log("Call number successful");
+			}, function() {
+				window.plugins.toast.showShortBottom("Error calling phone number, try calling manually");
+			}, phoneInput.value, true);
+		});
+		clearText2.addEventListener('click', function() {
+			addressInput.value = "";
+			clearText2.style.display = "none";
+		});
+		phoneInput.addEventListener('input', function() {
+			if (phoneInput.value.length > 0) {
+				clearText1.style.display = "block";
+				callText.style.display = "inline";
+			} else {
+				clearText1.style.display = "none";
+				callText.style.display = "none";
+			}
+		});
+		addressInput.addEventListener('input', function() {
+			if (addressInput.value.length > 0) {
+				clearText2.style.display = "block";
+			} else {
+				clearText2.style.display = "none";
+			}
+			var g_autocomplete = $("body > .pac-container").filter(":visible");
+	        g_autocomplete.bind('DOMNodeInserted DOMNodeRemoved', function(event) {
+	            $(".pac-item", this).addClass("needsclick");
+	        });
+		});
+
+		addressInput.onfocus = function() {
+			autoCompleteHack();
+		}
+
+
+		//setup autocomplete
+		autocomplete = new google.maps.places.Autocomplete(addressInput,
+	      {types: ['geocode']});
+		geolocate();
+		autoCompleteHack();
+	});
+
+	document.addEventListener("pause", function() {
+		console.log("App has been put in background.");
+		appIsInForeground = false;
+	}, false);
+
+	document.addEventListener("resume", function() {
+		console.log("App has been put in foreground.");
+		appIsInForeground = true;
+		if (showSMSNotSentMessage) {
+			showSMSNotSentMessage = false;
+			window.plugins.toast.showLongBottom("Didn't send arrival SMS since app was in background");
+		}
+	}, false);
+
+	/*
+	OTHER METHODS
+	*/
 
 	// Bias the autocomplete object to the user's geographical location,
 	// as supplied by the browser's 'navigator.geolocation' object.
@@ -551,74 +634,6 @@ angular.module('app.controllers', [])
 		console.log("Distance: From " + lat1 + "," + lon1 + " to " + lat2 + "," + lon2 + " is " + dist);
 		return dist
 	}
-
-	button2.style.display="none";
-	if(localStorage != undefined) {
-		button1.addEventListener('click', button1DefaultClickListener);
-		button2.addEventListener('click', button2ClickListener);
-	}
-	clearText1.addEventListener('click', function() {
-		phoneInput.value = "";
-		clearText1.style.display = "none";
-		callText.style.display = "none";
-	});
-	callText.addEventListener('click', function() {
-		window.plugins.toast.showShortBottom("Calling...");
-		window.plugins.CallNumber.callNumber(function() {
-			console.log("Call number successful");
-		}, function() {
-			window.plugins.toast.showShortBottom("Error calling phone number, try calling manually");
-		}, phoneInput.value, true);
-	});
-	clearText2.addEventListener('click', function() {
-		addressInput.value = "";
-		clearText2.style.display = "none";
-	});
-	phoneInput.addEventListener('input', function() {
-		if (phoneInput.value.length > 0) {
-			clearText1.style.display = "block";
-			callText.style.display = "inline";
-		} else {
-			clearText1.style.display = "none";
-			callText.style.display = "none";
-		}
-	});
-	addressInput.addEventListener('input', function() {
-		if (addressInput.value.length > 0) {
-			clearText2.style.display = "block";
-		} else {
-			clearText2.style.display = "none";
-		}
-		var g_autocomplete = $("body > .pac-container").filter(":visible");
-        g_autocomplete.bind('DOMNodeInserted DOMNodeRemoved', function(event) {
-            $(".pac-item", this).addClass("needsclick");
-        });
-	});
-
-	addressInput.onfocus = function() {
-		autoCompleteHack();
-	}
-
-
-	//setup autocomplete
-	var autocomplete = new google.maps.places.Autocomplete(addressInput,
-      {types: ['geocode']});
-	geolocate();
-	autoCompleteHack();
-
-	document.addEventListener("pause", function() {
-		console.log("App has been put in background.");
-		appIsInForeground = false;
-	}, false);
-
-	document.addEventListener("resume", function() {
-		console.log("App has been put in foreground.");
-		appIsInForeground = true;
-		if (showSMSNotSentMessage) {
-			showSMSNotSentMessage = false;
-			window.plugins.toast.showLongBottom("Didn't send arrival SMS since app was in background");
-		}
-	}, false);
 
 	//hack to get clicking on autocomplete working
 	function autoCompleteHack() {
