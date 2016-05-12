@@ -1,0 +1,344 @@
+0000.000 (0) Opened log file at time: Wed, 11 May 2016 22:40:30 +0000 on http://www.mapsnap.net
+0000.002 (0) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.12.6 WP: 4.5.2 PHP: 5.6.17 (Linux box694.bluehost.com 3.12.52-20160119.106.ELK6.x86_64 #1 SMP Tue Jan 19 16:53:32 CST 2016 x86_64) MySQL: 5.5.42 WPLANG:  Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 5.7M | 6.3M) multisite: N openssl: OpenSSL 1.0.1e-fips 11 Feb 2013 mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.217 (0) Free space on disk containing Updraft's temporary directory: 211936.6 MB
+0000.220 (0) Tasks: Backup files: 1 (schedule: daily) Backup DB:  (schedule: daily)
+0000.221 (0) Processed schedules. Combining jobs from identical schedules. Tasks now: Backup files: 1 Backup DB: 1
+0000.260 (0) Requesting semaphore lock (fd) (apparently via scheduler: last_scheduled_action_called_at=1462933154, seconds_ago=73276)
+0000.262 (0) Set semaphore last lock (fd) time to 2016-05-11 22:40:30
+0000.263 (0) Semaphore lock (fd) complete
+0000.268 (0) Backup run: resumption=0, nonce=71b5f52abb28, begun at=1463006430 (0s ago), job type=backup
+0000.270 (0) Scheduling a resumption (1) after 300 seconds (1463006730) in case this run gets aborted
+0000.350 (0) Checking if we have a zip executable available
+0000.351 (0) Testing: /usr/bin/zip
+0000.364 (0) Output: zip warning: binziptest/test.zip not found or empty
+0000.366 (0) Output: adding: binziptest/subdir1/	(in=0) (out=0) (stored 0%)
+0000.366 (0) Output: adding: binziptest/subdir1/subdir2/	(in=0) (out=0) (stored 0%)
+0000.367 (0) Output: adding: binziptest/subdir1/subdir2/test.html	(in=128) (out=105) (deflated 18%)
+0000.368 (0) Output: total bytes=128, compressed=105 -> 18% savings
+0000.380 (0) Output: adding: binziptest/subdir1/subdir2/test2.html	(in=135) (out=111) (deflated 18%)
+0000.381 (0) Output: total bytes=263, compressed=216 -> 18% savings
+0000.442 (0) Working binary zip found: /usr/bin/zip
+0000.444 (0) Zip engine: found/will use a binary zip: /usr/bin/zip
+0000.445 (0) Creation of backups of directories: beginning
+0000.447 (0) Beginning creation of dump of plugins (split every: 400 MB)
+0001.115 (0) Total entities for the zip file: 631 directories, 4121 files (0 skipped as non-modified), 52.9 MB
+0001.122 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 100 files added (on-disk size: 0 KB)
+0001.127 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 200 files added (on-disk size: 0 KB)
+0001.132 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 300 files added (on-disk size: 0 KB)
+0001.138 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 400 files added (on-disk size: 0 KB)
+0001.143 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 500 files added (on-disk size: 0 KB)
+0001.145 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4.8 MB, 4121 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+0002.503 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: size is now: 1.70 MB
+0002.510 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 600 files added (on-disk size: 1756.4 KB)
+0002.513 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 700 files added (on-disk size: 1756.4 KB)
+0002.516 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 800 files added (on-disk size: 1756.4 KB)
+0002.519 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 900 files added (on-disk size: 1756.4 KB)
+0002.522 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1000 files added (on-disk size: 1756.4 KB)
+0002.523 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (14.5 MB, 4121 files batched, 501 (1002) added so far); re-opening (prior size: 1756.4 KB)
+0006.898 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: size is now: 6.10 MB
+0006.911 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1100 files added (on-disk size: 6259 KB)
+0006.917 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1200 files added (on-disk size: 6259 KB)
+0006.922 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1300 files added (on-disk size: 6259 KB)
+0006.928 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1400 files added (on-disk size: 6259 KB)
+0006.936 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1500 files added (on-disk size: 6259 KB)
+0006.939 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (1.9 MB, 4121 files batched, 501 (1503) added so far); re-opening (prior size: 6259 KB)
+0008.254 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1600 files added (on-disk size: 6986.7 KB)
+0008.260 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1700 files added (on-disk size: 6986.7 KB)
+0008.266 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1800 files added (on-disk size: 6986.7 KB)
+0008.272 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 1900 files added (on-disk size: 6986.7 KB)
+0008.278 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2000 files added (on-disk size: 6986.7 KB)
+0008.279 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.7 MB, 4121 files batched, 501 (2004) added so far); re-opening (prior size: 6986.7 KB)
+0010.978 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: size is now: 8.50 MB
+0010.990 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2100 files added (on-disk size: 8663.3 KB)
+0010.995 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2200 files added (on-disk size: 8663.3 KB)
+0011.000 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2300 files added (on-disk size: 8663.3 KB)
+0011.004 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2400 files added (on-disk size: 8663.3 KB)
+0011.009 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2500 files added (on-disk size: 8663.3 KB)
+0011.010 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (8.6 MB, 4121 files batched, 501 (2505) added so far); re-opening (prior size: 8663.3 KB)
+0013.136 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: size is now: 12.00 MB
+0015.988 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2600 files added (on-disk size: 12326.2 KB)
+0015.994 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2700 files added (on-disk size: 12326.2 KB)
+0016.011 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2800 files added (on-disk size: 12326.2 KB)
+0016.021 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 2900 files added (on-disk size: 12326.2 KB)
+0016.031 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3000 files added (on-disk size: 12326.2 KB)
+0016.032 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.1 MB, 4121 files batched, 501 (3006) added so far); re-opening (prior size: 12326.2 KB)
+0018.777 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: size is now: 15.10 MB
+0018.804 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3100 files added (on-disk size: 15502.8 KB)
+0018.808 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3200 files added (on-disk size: 15502.8 KB)
+0018.812 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3300 files added (on-disk size: 15502.8 KB)
+0018.816 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3400 files added (on-disk size: 15502.8 KB)
+0018.819 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3500 files added (on-disk size: 15502.8 KB)
+0018.821 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (7.5 MB, 4121 files batched, 501 (3507) added so far); re-opening (prior size: 15502.8 KB)
+0021.104 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3600 files added (on-disk size: 18021.8 KB)
+0021.109 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3700 files added (on-disk size: 18021.8 KB)
+0021.114 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3800 files added (on-disk size: 18021.8 KB)
+0021.120 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 3900 files added (on-disk size: 18021.8 KB)
+0021.125 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 4000 files added (on-disk size: 18021.8 KB)
+0021.127 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.9 MB, 4121 files batched, 501 (4008) added so far); re-opening (prior size: 18021.8 KB)
+0022.151 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip.tmp: 4100 files added (on-disk size: 19123.8 KB)
+0022.706 (0) Created plugins zip (0) - 19715.9 KB in 22.1 s (892 KB/s) (SHA1 checksum: 794540c0ee73c1a1ad04ff3e3a8a56e6e491f506)
+0022.710 (0) Beginning creation of dump of themes (split every: 400 MB)
+0023.059 (0) Total entities for the zip file: 171 directories, 1096 files (0 skipped as non-modified), 24.7 MB
+0023.062 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+0023.065 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+0023.068 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+0023.071 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 400 files added (on-disk size: 0 KB)
+0023.074 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 500 files added (on-disk size: 0 KB)
+0023.075 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (10.5 MB, 1096 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+0026.859 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: size is now: 7.20 MB
+0026.866 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 600 files added (on-disk size: 7376.8 KB)
+0026.871 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 700 files added (on-disk size: 7376.8 KB)
+0026.876 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 800 files added (on-disk size: 7376.8 KB)
+0026.882 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 900 files added (on-disk size: 7376.8 KB)
+0026.887 (0) Zip: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: 1000 files added (on-disk size: 7376.8 KB)
+0026.889 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (12.1 MB, 1096 files batched, 501 (1002) added so far); re-opening (prior size: 7376.8 KB)
+0031.043 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip.tmp: size is now: 15.20 MB
+0032.189 (0) Created themes zip (0) - 17298.5 KB in 9.3 s (1861.3 KB/s) (SHA1 checksum: bcdda0665f2b80b028bee73f2cb0175ea524f2b1)
+0032.194 (0) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone
+0032.195 (0) Looking for candidates to back up in: /home6/mapsnapn/public_html/wp-content/uploads
+0032.197 (0) finding files: wc-logs: adding to list (1)
+0032.198 (0) finding files: woocommerce_uploads: adding to list (2)
+0032.199 (0) finding files: 2016: adding to list (3)
+0032.200 (0) Beginning creation of dump of uploads (split every: 400 MB)
+0032.569 (0) Total entities for the zip file: 5 directories, 72 files (0 skipped as non-modified), 20.6 MB
+0034.554 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-uploads.zip.tmp: size is now: 20.60 MB
+0034.727 (0) Created uploads zip (0) - 21121.1 KB in 2.2 s (9557 KB/s) (SHA1 checksum: c03c6c6d2e20b381c7fec828b61fb33525a3a64a)
+0034.729 (0) Beginning backup of other directories found in the content directory (index: 0)
+0034.730 (0) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups,mysql.sql,debug.log
+0034.731 (0) Looking for candidates to back up in: /home6/mapsnapn/public_html/wp-content
+0034.731 (0) finding files: themes: skipping: this is the themes directory
+0034.732 (0) finding files: index.php: adding to list (1)
+0034.733 (0) finding files: upgrade: skipping: excluded by options
+0034.733 (0) finding files: plugins: skipping: this is the plugins directory
+0034.734 (0) finding files: .DS_Store: adding to list (2)
+0034.735 (0) finding files: uploads: skipping: this is the uploads directory
+0034.735 (0) finding files: install.php: adding to list (3)
+0034.736 (0) finding files: updraft: skipping: this is the updraft directory
+0035.131 (0) Total entities for the zip file: 0 directories, 3 files (0 skipped as non-modified), 0 MB
+0035.417 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-others.zip.tmp: size is now: 0.00 MB
+0035.422 (0) Created others zip (0) - 1.3 KB in 0.3 s (4.5 KB/s) (SHA1 checksum: 994154528787d90ff60bb2432f75e94f4d3f5c13)
+0035.447 (0) Saving backup status to database (elements: 8)
+0035.450 (0) Beginning creation of database dump (WordPress DB)
+0035.453 (0) Testing: /usr/bin/mysqldump
+0035.512 (0) Working binary mysqldump found: /usr/bin/mysqldump
+0035.558 (0) Table wp_xmqw_options: Total expected rows (approximate): 506
+0035.618 (0) Table wp_xmqw_options: Total rows added: 505 in 0.06 seconds
+0035.622 (0) Table wp_xmqw_options: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_options.table.gz - 69 KB)
+0035.627 (0) Table wp_xmqw_users: Total expected rows (approximate): 1
+0035.630 (0) Table wp_xmqw_users: Total rows added: 1 in 0.00 seconds
+0035.632 (0) Table wp_xmqw_users: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_users.table.gz - 0.6 KB)
+0035.637 (0) Table wp_xmqw_usermeta: Total expected rows (approximate): 28
+0035.641 (0) Table wp_xmqw_usermeta: Total rows added: 28 in 0.00 seconds
+0035.642 (0) Table wp_xmqw_usermeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_usermeta.table.gz - 1.6 KB)
+0035.649 (0) Table wp_xmqw_commentmeta: Total expected rows (approximate): 3
+0035.656 (0) Table wp_xmqw_commentmeta: Total rows added: 3 in 0.01 seconds
+0035.657 (0) Table wp_xmqw_commentmeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_commentmeta.table.gz - 0.5 KB)
+0035.662 (0) Table wp_xmqw_comments: Total expected rows (approximate): 1
+0035.666 (0) Table wp_xmqw_comments: Total rows added: 1 in 0.00 seconds
+0035.668 (0) Table wp_xmqw_comments: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_comments.table.gz - 0.7 KB)
+0035.676 (0) Table wp_xmqw_links: Total expected rows (approximate): 0
+0035.679 (0) Table wp_xmqw_links: Total rows added: 0 in 0.00 seconds
+0035.680 (0) Table wp_xmqw_links: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_links.table.gz - 0.4 KB)
+0035.685 (0) Table wp_xmqw_postmeta: Total expected rows (approximate): 225
+0035.699 (0) Table wp_xmqw_postmeta: Total rows added: 225 in 0.01 seconds
+0035.701 (0) Table wp_xmqw_postmeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_postmeta.table.gz - 5.5 KB)
+0035.709 (0) Table wp_xmqw_posts: Total expected rows (approximate): 138
+0035.747 (0) Table wp_xmqw_posts: Total rows added: 138 in 0.04 seconds
+0035.749 (0) Table wp_xmqw_posts: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_posts.table.gz - 12 KB)
+0035.755 (0) Table wp_xmqw_term_relationships: Total expected rows (approximate): 1
+0035.759 (0) Table wp_xmqw_term_relationships: Total rows added: 1 in 0.00 seconds
+0035.761 (0) Table wp_xmqw_term_relationships: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_term_relationships.table.gz - 0.4 KB)
+0035.767 (0) Table wp_xmqw_term_taxonomy: Total expected rows (approximate): 5
+0035.776 (0) Table wp_xmqw_term_taxonomy: Total rows added: 5 in 0.00 seconds
+0035.778 (0) Table wp_xmqw_term_taxonomy: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_term_taxonomy.table.gz - 0.5 KB)
+0035.783 (0) Table wp_xmqw_termmeta: Total expected rows (approximate): 0
+0035.786 (0) Table wp_xmqw_termmeta: Total rows added: 0 in 0.00 seconds
+0035.787 (0) Table wp_xmqw_termmeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_termmeta.table.gz - 0.4 KB)
+0035.793 (0) Table wp_xmqw_terms: Total expected rows (approximate): 5
+0035.796 (0) Table wp_xmqw_terms: Total rows added: 5 in 0.00 seconds
+0035.799 (0) Table wp_xmqw_terms: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_terms.table.gz - 0.4 KB)
+0035.819 (0) Table wp_xmqw_contactformmaker: Total expected rows (approximate): 10
+0035.848 (0) Table wp_xmqw_contactformmaker: Total rows added: 10 in 0.02 seconds
+0035.850 (0) Table wp_xmqw_contactformmaker: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker.table.gz - 7 KB)
+0035.857 (0) Table wp_xmqw_contactformmaker_blocked: Total expected rows (approximate): 0
+0035.862 (0) Table wp_xmqw_contactformmaker_blocked: Total rows added: 0 in 0.00 seconds
+0035.864 (0) Table wp_xmqw_contactformmaker_blocked: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_blocked.table.gz - 0.3 KB)
+0035.873 (0) Table wp_xmqw_contactformmaker_submits: Total expected rows (approximate): 0
+0035.876 (0) Table wp_xmqw_contactformmaker_submits: Total rows added: 0 in 0.00 seconds
+0035.878 (0) Table wp_xmqw_contactformmaker_submits: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_submits.table.gz - 0.3 KB)
+0035.892 (0) Table wp_xmqw_contactformmaker_themes: Total expected rows (approximate): 37
+0035.947 (0) Table wp_xmqw_contactformmaker_themes: Total rows added: 37 in 0.05 seconds
+0035.956 (0) Table wp_xmqw_contactformmaker_themes: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_themes.table.gz - 22.6 KB)
+0035.963 (0) Table wp_xmqw_contactformmaker_views: Total expected rows (approximate): 8
+0035.970 (0) Table wp_xmqw_contactformmaker_views: Total rows added: 8 in 0.00 seconds
+0035.972 (0) Table wp_xmqw_contactformmaker_views: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_views.table.gz - 0.3 KB)
+0035.979 (0) Table wp_xmqw_pmpro_discount_codes: Total expected rows (approximate): 0
+0035.985 (0) Table wp_xmqw_pmpro_discount_codes: Total rows added: 0 in 0.00 seconds
+0035.992 (0) Table wp_xmqw_pmpro_discount_codes: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_discount_codes.table.gz - 0.3 KB)
+0036.007 (0) Table wp_xmqw_pmpro_discount_codes_levels: Total expected rows (approximate): 0
+0036.011 (0) Table wp_xmqw_pmpro_discount_codes_levels: Total rows added: 0 in 0.00 seconds
+0036.012 (0) Table wp_xmqw_pmpro_discount_codes_levels: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_discount_codes_levels.table.gz - 0.5 KB)
+0036.019 (0) Table wp_xmqw_pmpro_discount_codes_uses: Total expected rows (approximate): 0
+0036.024 (0) Table wp_xmqw_pmpro_discount_codes_uses: Total rows added: 0 in 0.00 seconds
+0036.025 (0) Table wp_xmqw_pmpro_discount_codes_uses: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_discount_codes_uses.table.gz - 0.3 KB)
+0036.032 (0) Table wp_xmqw_pmpro_membership_levelmeta: Total expected rows (approximate): 0
+0036.036 (0) Table wp_xmqw_pmpro_membership_levelmeta: Total rows added: 0 in 0.00 seconds
+0036.037 (0) Table wp_xmqw_pmpro_membership_levelmeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_membership_levelmeta.table.gz - 0.3 KB)
+0036.044 (0) Table wp_xmqw_pmpro_membership_levels: Total expected rows (approximate): 2
+0036.068 (0) Table wp_xmqw_pmpro_membership_levels: Total rows added: 2 in 0.02 seconds
+0036.069 (0) Table wp_xmqw_pmpro_membership_levels: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_membership_levels.table.gz - 0.7 KB)
+0036.087 (0) Table wp_xmqw_pmpro_membership_orders: Total expected rows (approximate): 0
+0036.090 (0) Table wp_xmqw_pmpro_membership_orders: Total rows added: 0 in 0.00 seconds
+0036.091 (0) Table wp_xmqw_pmpro_membership_orders: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_membership_orders.table.gz - 0.7 KB)
+0036.107 (0) Table wp_xmqw_pmpro_memberships_categories: Total expected rows (approximate): 0
+0036.110 (0) Table wp_xmqw_pmpro_memberships_categories: Total rows added: 0 in 0.00 seconds
+0036.111 (0) Table wp_xmqw_pmpro_memberships_categories: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_memberships_categories.table.gz - 0.3 KB)
+0036.120 (0) Table wp_xmqw_pmpro_memberships_pages: Total expected rows (approximate): 0
+0036.128 (0) Table wp_xmqw_pmpro_memberships_pages: Total rows added: 0 in 0.01 seconds
+0036.129 (0) Table wp_xmqw_pmpro_memberships_pages: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_memberships_pages.table.gz - 0.3 KB)
+0036.138 (0) Table wp_xmqw_pmpro_memberships_users: Total expected rows (approximate): 0
+0036.141 (0) Table wp_xmqw_pmpro_memberships_users: Total rows added: 0 in 0.00 seconds
+0036.142 (0) Table wp_xmqw_pmpro_memberships_users: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_memberships_users.table.gz - 0.5 KB)
+0036.149 (0) Table wp_xmqw_pts_modules: Total expected rows (approximate): 9
+0036.152 (0) Table wp_xmqw_pts_modules: Total rows added: 9 in 0.00 seconds
+0036.154 (0) Table wp_xmqw_pts_modules: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_modules.table.gz - 0.5 KB)
+0036.164 (0) Table wp_xmqw_pts_modules_type: Total expected rows (approximate): 2
+0036.167 (0) Table wp_xmqw_pts_modules_type: Total rows added: 2 in 0.00 seconds
+0036.168 (0) Table wp_xmqw_pts_modules_type: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_modules_type.table.gz - 0.3 KB)
+0036.172 (0) Table wp_xmqw_pts_tables: Total expected rows (approximate): 9
+0036.183 (0) Table wp_xmqw_pts_tables: Total rows added: 9 in 0.01 seconds
+0036.185 (0) Table wp_xmqw_pts_tables: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_tables.table.gz - 22.1 KB)
+0036.190 (0) Table wp_xmqw_pts_usage_stat: Total expected rows (approximate): 2
+0036.194 (0) Table wp_xmqw_pts_usage_stat: Total rows added: 2 in 0.00 seconds
+0036.195 (0) Table wp_xmqw_pts_usage_stat: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_usage_stat.table.gz - 0.4 KB)
+0036.201 (0) Table wp_xmqw_woocommerce_api_keys: Total expected rows (approximate): 0
+0036.203 (0) Table wp_xmqw_woocommerce_api_keys: Total rows added: 0 in 0.00 seconds
+0036.204 (0) Table wp_xmqw_woocommerce_api_keys: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_api_keys.table.gz - 0.4 KB)
+0036.208 (0) Table wp_xmqw_woocommerce_attribute_taxonomies: Total expected rows (approximate): 0
+0036.211 (0) Table wp_xmqw_woocommerce_attribute_taxonomies: Total rows added: 0 in 0.00 seconds
+0036.212 (0) Table wp_xmqw_woocommerce_attribute_taxonomies: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_attribute_taxonomies.table.gz - 0.4 KB)
+0036.219 (0) Table wp_xmqw_woocommerce_downloadable_product_permissions: Total expected rows (approximate): 0
+0036.222 (0) Table wp_xmqw_woocommerce_downloadable_product_permissions: Total rows added: 0 in 0.00 seconds
+0036.224 (0) Table wp_xmqw_woocommerce_downloadable_product_permissions: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_downloadable_product_permissions.table.gz - 0.5 KB)
+0036.229 (0) Table wp_xmqw_woocommerce_order_itemmeta: Total expected rows (approximate): 0
+0036.231 (0) Table wp_xmqw_woocommerce_order_itemmeta: Total rows added: 0 in 0.00 seconds
+0036.232 (0) Table wp_xmqw_woocommerce_order_itemmeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_order_itemmeta.table.gz - 0.4 KB)
+0036.237 (0) Table wp_xmqw_woocommerce_order_items: Total expected rows (approximate): 0
+0036.239 (0) Table wp_xmqw_woocommerce_order_items: Total rows added: 0 in 0.00 seconds
+0036.240 (0) Table wp_xmqw_woocommerce_order_items: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_order_items.table.gz - 0.4 KB)
+0036.244 (0) Table wp_xmqw_woocommerce_sessions: Total expected rows (approximate): 0
+0036.246 (0) Table wp_xmqw_woocommerce_sessions: Total rows added: 0 in 0.00 seconds
+0036.247 (0) Table wp_xmqw_woocommerce_sessions: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_sessions.table.gz - 0.3 KB)
+0036.252 (0) Table wp_xmqw_woocommerce_tax_rate_locations: Total expected rows (approximate): 0
+0036.254 (0) Table wp_xmqw_woocommerce_tax_rate_locations: Total rows added: 0 in 0.00 seconds
+0036.255 (0) Table wp_xmqw_woocommerce_tax_rate_locations: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_tax_rate_locations.table.gz - 0.4 KB)
+0036.261 (0) Table wp_xmqw_woocommerce_tax_rates: Total expected rows (approximate): 0
+0036.264 (0) Table wp_xmqw_woocommerce_tax_rates: Total rows added: 0 in 0.00 seconds
+0036.265 (0) Table wp_xmqw_woocommerce_tax_rates: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_tax_rates.table.gz - 0.4 KB)
+0036.271 (0) Table wp_xmqw_woocommerce_termmeta: Total expected rows (approximate): 0
+0036.273 (0) Table wp_xmqw_woocommerce_termmeta: Total rows added: 0 in 0.00 seconds
+0036.274 (0) Table wp_xmqw_woocommerce_termmeta: finishing file (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_termmeta.table.gz - 0.4 KB)
+0036.277 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_options.table.gz (1/39): adding to final database dump
+0036.304 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_users.table.gz (2/39): adding to final database dump
+0036.306 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_usermeta.table.gz (3/39): adding to final database dump
+0036.308 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_commentmeta.table.gz (4/39): adding to final database dump
+0036.309 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_comments.table.gz (5/39): adding to final database dump
+0036.311 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_links.table.gz (6/39): adding to final database dump
+0036.312 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_postmeta.table.gz (7/39): adding to final database dump
+0036.317 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_posts.table.gz (8/39): adding to final database dump
+0036.329 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_term_relationships.table.gz (9/39): adding to final database dump
+0036.332 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_term_taxonomy.table.gz (10/39): adding to final database dump
+0036.335 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_termmeta.table.gz (11/39): adding to final database dump
+0036.337 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_terms.table.gz (12/39): adding to final database dump
+0036.339 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker.table.gz (13/39): adding to final database dump
+0036.346 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_blocked.table.gz (14/39): adding to final database dump
+0036.348 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_submits.table.gz (15/39): adding to final database dump
+0036.349 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_themes.table.gz (16/39): adding to final database dump
+0036.372 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_contactformmaker_views.table.gz (17/39): adding to final database dump
+0036.374 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_discount_codes.table.gz (18/39): adding to final database dump
+0036.376 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_discount_codes_levels.table.gz (19/39): adding to final database dump
+0036.379 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_discount_codes_uses.table.gz (20/39): adding to final database dump
+0036.384 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_membership_levelmeta.table.gz (21/39): adding to final database dump
+0036.385 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_membership_levels.table.gz (22/39): adding to final database dump
+0036.387 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_membership_orders.table.gz (23/39): adding to final database dump
+0036.389 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_memberships_categories.table.gz (24/39): adding to final database dump
+0036.391 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_memberships_pages.table.gz (25/39): adding to final database dump
+0036.392 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pmpro_memberships_users.table.gz (26/39): adding to final database dump
+0036.394 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_modules.table.gz (27/39): adding to final database dump
+0036.396 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_modules_type.table.gz (28/39): adding to final database dump
+0036.397 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_tables.table.gz (29/39): adding to final database dump
+0036.408 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_pts_usage_stat.table.gz (30/39): adding to final database dump
+0036.410 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_api_keys.table.gz (31/39): adding to final database dump
+0036.412 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_attribute_taxonomies.table.gz (32/39): adding to final database dump
+0036.413 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_downloadable_product_permissions.table.gz (33/39): adding to final database dump
+0036.415 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_order_itemmeta.table.gz (34/39): adding to final database dump
+0036.417 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_order_items.table.gz (35/39): adding to final database dump
+0036.418 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_sessions.table.gz (36/39): adding to final database dump
+0036.419 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_tax_rate_locations.table.gz (37/39): adding to final database dump
+0036.421 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_tax_rates.table.gz (38/39): adding to final database dump
+0036.422 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db-table-wp_xmqw_woocommerce_termmeta.table.gz (39/39): adding to final database dump
+0036.424 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db.gz: finished writing out complete database file (128 KB)
+0036.432 (0) Total database tables backed up: 39 (backup_2016-05-11-2240_MapSnap_71b5f52abb28-db.gz, size: 147430, checksum (SHA1): f462fa35134bee04f75ad239b8980ad325452a82)
+0036.440 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+0036.441 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+0036.442 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+0036.443 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-others.zip: others: This file has not yet been successfully uploaded: will queue
+0036.444 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db.gz: db: This file has not yet been successfully uploaded: will queue
+0036.445 (0) Saving backup history. Total backup size: 56.9 MB
+0036.448 (0) Requesting upload of the files that have not yet been successfully uploaded (5)
+0036.452 (0) Cloud backup selection (1/1): email (last)
+0036.453 (0) Beginning dispatch of backup to remote (email)
+0036.454 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip: email to: you@e...
+0066.342 (0) Recording as successfully uploaded: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip (36a94758705846e41bf4032b06d9133d)
+0066.351 (0) Deleting local file: backup_2016-05-11-2240_MapSnap_71b5f52abb28-plugins.zip: OK
+0066.353 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip: email to: you@e...
+0091.892 (0) Recording as successfully uploaded: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip (592b7020eb06cc2d6c19443b9823f9b6)
+0091.904 (0) Deleting local file: backup_2016-05-11-2240_MapSnap_71b5f52abb28-themes.zip: OK
+0091.910 (0) [Warning] backup_2016-05-11-2240_MapSnap_71b5f52abb28-uploads.zip: This backup archive is 20.6 MB in size - the attempt to send this via email is likely to fail (few email servers allow attachments of this size). If so, you should switch to using a different remote storage method.
+0091.911 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-uploads.zip: email to: you@e...
+0121.158 (0) Recording as successfully uploaded: backup_2016-05-11-2240_MapSnap_71b5f52abb28-uploads.zip (22d26d7b0ac15d0ff9783b5735629082)
+0121.165 (0) Deleting local file: backup_2016-05-11-2240_MapSnap_71b5f52abb28-uploads.zip: OK
+0121.166 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-others.zip: email to: you@e...
+0123.452 (0) Recording as successfully uploaded: backup_2016-05-11-2240_MapSnap_71b5f52abb28-others.zip (f580226d5b2aedf9379bb33b34bc2efa)
+0123.455 (0) Deleting local file: backup_2016-05-11-2240_MapSnap_71b5f52abb28-others.zip: OK
+0123.456 (0) backup_2016-05-11-2240_MapSnap_71b5f52abb28-db.gz: email to: you@e...
+0125.862 (0) Recording as successfully uploaded: backup_2016-05-11-2240_MapSnap_71b5f52abb28-db.gz (c899068d08527a4cc96bd6f382482476)
+0125.866 (0) Deleting local file: backup_2016-05-11-2240_MapSnap_71b5f52abb28-db.gz: OK
+0125.869 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0125.871 (0) Number of backup sets in history: 3; groups (db): 1
+0125.872 (0) Examining (for databases) backup set with group_id=0, nonce=71b5f52abb28, datestamp=1463006430 (May 11 2016 22:40:30)
+0125.873 (0) This backup set is the backup set just made, so will not be deleted.
+0125.874 (0) Examining (for databases) backup set with group_id=0, nonce=82be84eeb6f0, datestamp=1462933153 (May 11 2016 02:19:13)
+0125.875 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0125.881 (0) Examining (for databases) backup set with group_id=0, nonce=80a0313a7c0b, datestamp=1462825654 (May 09 2016 20:27:34)
+0125.888 (0) 1462825654: db: this set includes a database (backup_2016-05-09-2027_MapSnap_80a0313a7c0b-db.gz); db count is now 2
+0125.896 (0) 1462825654: db: over retain limit (2); will delete this database
+0125.898 (0) Delete file: backup_2016-05-09-2027_MapSnap_80a0313a7c0b-db.gz, service=email
+0125.900 (0) This backup set remains non-empty (f=1/d=0); will retain in history
+0125.901 (0) Number of backup sets in history: 3; groups (files): 1
+0125.902 (0) Examining (for files) backup set with nonce=71b5f52abb28, datestamp=1463006430 (May 11 2016 22:40:30)
+0125.903 (0) This backup set is the backup set just made, so will not be deleted.
+0125.904 (0) This backup set is the backup set just made, so will not be deleted.
+0125.905 (0) This backup set is the backup set just made, so will not be deleted.
+0125.905 (0) This backup set is the backup set just made, so will not be deleted.
+0125.905 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0125.906 (0) Examining (for files) backup set with nonce=82be84eeb6f0, datestamp=1462933153 (May 11 2016 02:19:13)
+0125.907 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0125.908 (0) Examining (for files) backup set with nonce=80a0313a7c0b, datestamp=1462825654 (May 09 2016 20:27:34)
+0125.909 (0) plugins: over retain limit (2); will delete this file entity
+0125.910 (0) themes: over retain limit (2); will delete this file entity
+0125.911 (0) uploads: over retain limit (2); will delete this file entity
+0125.912 (0) others: over retain limit (2); will delete this file entity
+0125.913 (0) Delete file: backup_2016-05-09-2027_MapSnap_80a0313a7c0b-plugins.zip, service=email
+0125.914 (0) Delete file: backup_2016-05-09-2027_MapSnap_80a0313a7c0b-themes.zip, service=email
+0125.915 (0) Delete file: backup_2016-05-09-2027_MapSnap_80a0313a7c0b-uploads.zip, service=email
+0125.917 (0) Delete file: backup_2016-05-09-2027_MapSnap_80a0313a7c0b-others.zip, service=email
+0125.920 (0) This backup set is now empty; will remove from history
+0125.921 (0) Deleting log file (log.80a0313a7c0b.txt)
+0125.922 (0) Retain: saving new backup history (sets now: 2) and finishing retain operation
+0125.928 (0) Resume backup (71b5f52abb28, 0): finish run
+0125.930 (0) Decremented the semaphore (fd) by 1
+0125.932 (0) Semaphore (fd) unlocked
+0125.933 (0) There were no errors in the uploads, so the 'resume' event (1) is being unscheduled
+0125.938 (0) No email will/can be sent - the user has not configured an email address.
+0125.939 (0) The backup apparently succeeded and is now complete
